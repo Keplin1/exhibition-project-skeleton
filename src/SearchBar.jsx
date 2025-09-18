@@ -1,7 +1,9 @@
 
 import { useState } from "react";
+
 const SearchBar = ({ searchTerm, setSearchTerm }) => {
-    const presetSearches = ['paintings', 'sculpture', 'modern art', 'photography'];
+
+    const presetSearches = ['sculpture', 'modern art', 'photography', 'landscapes', 'portraits', 'victorian art', 'pottery', 'fine art', 'ancient art'];
 
     const [searchInput, setSearchInput] = useState("");
     const handlePresetClick = (preset) => {
@@ -40,7 +42,7 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
             </div>
 
             <div className="flex flex-wrap gap-2">
-                <span className="text-sm text-gray-500 mr-2">Quick searches:</span>
+                <span className="text-sm text-back-500 mr-2 mt-4">Quick searches:</span>
                 {presetSearches.map((preset) => (
                     <button
                         key={preset}
