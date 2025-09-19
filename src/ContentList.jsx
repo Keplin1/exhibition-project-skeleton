@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import searchArtwork from './API'
+import { ItemContext } from './contexts/ItemContext';
 
 
 const ContentList = ({ searchTerm, setSearchTerm }) => {
@@ -13,7 +16,8 @@ const ContentList = ({ searchTerm, setSearchTerm }) => {
         department: '',
         hasImages: false
     });
-
+    const { setItems } = useContext(ItemContext)
+    const navigate = useNavigate();
 
 
     // API call 
@@ -31,6 +35,7 @@ const ContentList = ({ searchTerm, setSearchTerm }) => {
                 artworks = await searchArtwork(searchTerm);
                 console.log(artworks);
                 setSearchedArtworks(artworks);
+                setItems(artworks)
             } catch (error) {
                 console.log(error.message);
                 setError(true);
@@ -75,6 +80,10 @@ const ContentList = ({ searchTerm, setSearchTerm }) => {
     //     return true;
     // });
 
+    const handleItemClick = (artwork) => {
+        navigate(`/item/${artwork.id}`);
+    };
+
     return (
         <div>
             {/* Results Count */}
@@ -87,7 +96,11 @@ const ContentList = ({ searchTerm, setSearchTerm }) => {
             {/* Results Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {searchedArtworks.map((artwork) => (
-                    <div key={artwork.id} className="border border-gray-300 rounded overflow-hidden hover:shadow-lg transition-shadow">
+                    <div
+                        key={artwork.id}
+                        className="border border-gray-300 rounded overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                        onClick={() => handleItemClick(artwork)}
+                    >
                         {/* Thumbnail */}
                         <div className="aspect-square bg-gray-200 flex items-center justify-center">
                             {artwork.images.web.url ? (

@@ -15,6 +15,11 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
         setSearchInput(event.target.value);
     }
 
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            handleSubmit()
+        }
+    }
     const handleSubmit = () => {
         setSearchTerm(searchInput);
         setSearchInput("");
@@ -29,7 +34,7 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
                     placeholder="Search artworks or artists..."
                     value={searchInput}
                     onChange={handleChange}
-
+                    onKeyDown={handleKeyPress}
                     className="flex-1 p-2 border border-gray-300 rounded"
                 />
                 <button
@@ -39,6 +44,8 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
                 >
                     search
                 </button>
+
+
             </div>
 
             <div className="flex flex-wrap gap-2">
