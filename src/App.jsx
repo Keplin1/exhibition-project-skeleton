@@ -7,6 +7,8 @@ import ContentList from './ContentList'
 import SearchBar from './SearchBar'
 import ItemPage from './ItemPage';
 import { ItemProvider } from './contexts/ItemContext';
+import { CollectionProvider } from './contexts/CollectionContext';
+import CollectionPage from './CollectionPage';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("greek")
@@ -14,20 +16,22 @@ function App() {
   return (
     <BrowserRouter>
       <ItemProvider>
-        <Header />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-                <ContentList searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-              </>
-            }
-          />
-          <Route path="/item/:itemId" element={<ItemPage />} />
-
-        </Routes>
+        <CollectionProvider>
+          <Header />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                  <ContentList searchTerm={searchTerm} />
+                </>
+              }
+            />
+            <Route path="/item/:itemId" element={<ItemPage />} />
+            <Route path="/collection" element={<CollectionPage />} />
+          </Routes>
+        </CollectionProvider>
       </ItemProvider>
     </BrowserRouter>
   )

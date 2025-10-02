@@ -39,7 +39,7 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
                 />
                 <button
                     onClick={handleSubmit}
-                    className="px-4 py-2 bg-blue-600 text-black rounded disabled:opacity-50"
+                    className="px-6 py-4 bg-blue-200 text-black rounded disabled:opacity-50"
 
                 >
                     search

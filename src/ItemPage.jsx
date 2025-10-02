@@ -3,14 +3,18 @@ import { useParams, Link } from 'react-router-dom';
 
 import { useContext } from 'react';
 import { ItemContext } from './contexts/ItemContext';
+import { useCollection } from './contexts/CollectionContext';
 
 const ItemPage = () => {
     const { itemId } = useParams();
 
     const { items } = useContext(ItemContext)
 
+    const { collection } = useCollection();
+
     // Find the artwork by ID, handling string/number conversion
-    const artwork = items.find((currentItem) => currentItem.id.toString() === itemId);
+    const artwork = items.find((currentItem) => currentItem.id.toString() === itemId)
+        || collection.find((currentItem) => currentItem.id.toString() === itemId);
 
     // If no artwork data is found, show error
     if (!artwork) {
@@ -20,7 +24,7 @@ const ItemPage = () => {
                     to="/"
                     className="inline-block mb-4 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
                 >
-                    ← Back to Search
+                    Back to Search
                 </Link>
                 <div className="text-center py-8">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4">Artwork Not Found</h2>
@@ -42,7 +46,7 @@ const ItemPage = () => {
                 to="/"
                 className="inline-block mb-6 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
             >
-                ← Back to Search
+                Back to Search
             </Link>
 
             {/* Main Content */}
@@ -156,7 +160,7 @@ const ItemPage = () => {
                                         href={artwork.rawData.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                                        className="inline-block px-4 py-2 bg-blue-600 rounded hover:bg-blue-100 transition-colors"
                                     >
                                         View on Museum Website
                                     </a>
