@@ -48,17 +48,16 @@ const CollectionPage = () => {
                 My Collection ({collection.length} {collection.length === 1 ? 'artwork' : 'artworks'})
             </h2>
 
-
             {/* Collection Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {collection.map((artwork) => (
                     <div
                         key={artwork.id}
-                        className="border border-gray-300 rounded overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
+                        className="border border-gray-300 rounded overflow-hidden hover:shadow-lg transition-shadow"
                     >
                         {/* Thumbnail - clickable to view details */}
                         <div
-                            onClick={() => handleItemClick(artwork.id)}
+                            onClick={() => handleItemClick(artwork)}
                             className="aspect-square bg-gray-200 flex items-center justify-center cursor-pointer"
                         >
                             {artwork.images.web.url ? (
@@ -73,7 +72,7 @@ const CollectionPage = () => {
                         </div>
 
                         {/* Info and Remove Button */}
-                        <div className="p-3 flex flex-col flex-1">
+                        <div className="p-3">
                             <h3
                                 onClick={() => handleItemClick(artwork.id)}
                                 className="font-medium text-sm leading-tight overflow-hidden mb-1 cursor-pointer hover:text-blue-600"
@@ -91,7 +90,7 @@ const CollectionPage = () => {
 
                             <button
                                 onClick={() => removeFromCollection(artwork.id)}
-                                className="w-full text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 mt-auto"
+                                className="w-full text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
                             >
                                 Remove
                             </button>

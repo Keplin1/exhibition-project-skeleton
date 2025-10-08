@@ -5,6 +5,7 @@ import searchArtwork from './API'
 import { ItemContext } from './contexts/ItemContext';
 import SortControls from './SortControls';
 import { useCollection } from './contexts/CollectionContext';
+import { parseHistoricalDate } from './utils/sorting'
 
 const ContentList = ({ searchTerm }) => {
 
@@ -57,37 +58,16 @@ const ContentList = ({ searchTerm }) => {
     }, [searchTerm]);
 
 
-    const sortArtworks = (artworksToSort) => {
+    const sortArtworks = (artworksToSort, sortOption) => {
         if (!sortOption) return artworksToSort;
 
-        // Helper function to extract year from various date formats
-        const extractYear = (dateString) => {
-            const lowerDate = dateString.toLowerCase();
-
-            // Check for "Xth century" format (e.g., "19th century")
-            const centuryMatch = dateString.match(/(\d+)th\s+century/i);
-            if (centuryMatch) {
-                const century = parseInt(centuryMatch[1]);
-                return (century - 1) * 100 + 50; // 19th century = 1850
-            }
-
-            // Check for "mid-1500s", "early 1800s", "late 1600s"
-            if (lowerDate.includes('mid-') || lowerDate.includes('early') || lowerDate.includes('late')) {
-                const yearMatch = dateString.match(/(\d{4})/);
-                if (yearMatch) {
-                    const baseYear = parseInt(yearMatch[1]);
-                    if (lowerDate.includes('mid-')) return baseYear + 50;
-                    if (lowerDate.includes('early')) return baseYear + 15;
-                    if (lowerDate.includes('late')) return baseYear + 85;
-                }
-            }
-
-            // Extract first number
-            const numberMatch = dateString.match(/\d+/);
-            return numberMatch ? parseInt(numberMatch[0]) : 0;
-        };
-
         const sorted = [...artworksToSort];
+
+        const compareByDate = (a, b, ascending = true) => {
+            const yearA = parseHistoricalDate(a.date);
+            const yearB = parseHistoricalDate(b.date);
+            return ascending ? yearA - yearB : yearB - yearA;
+        };
 
         switch (sortOption) {
             case 'artist-asc':
@@ -111,67 +91,17 @@ const ContentList = ({ searchTerm }) => {
                 );
 
             case 'date-asc':
-                return sorted.sort((a, b) => {
-                    const yearA = extractYear(a.date);
-                    const yearB = extractYear(b.date);
-
-                    // Simple BCE check
-                    const upperA = a.date.toUpperCase();
-                    const upperB = b.date.toUpperCase();
-                    const isBCE_A = upperA.includes('BCE') || upperA.includes('BC');
-                    const isBCE_B = upperB.includes('BCE') || upperB.includes('BC');
-
-                    // Both BCE - higher number is older
-                    if (isBCE_A && isBCE_B) {
-                        return yearB - yearA;
-                    }
-                    // Both CE - lower number is older
-                    else if (!isBCE_A && !isBCE_B) {
-                        return yearA - yearB;
-                    }
-                    // BCE before CE
-                    else if (isBCE_A && !isBCE_B) {
-                        return -1;
-                    }
-                    else {
-                        return 1;
-                    }
-                });
+                return sorted.sort((a, b) => compareByDate(a, b, true));
 
             case 'date-desc':
-                return sorted.sort((a, b) => {
-                    const yearA = extractYear(a.date);
-                    const yearB = extractYear(b.date);
-
-                    // Simple BCE check
-                    const upperA = a.date.toUpperCase();
-                    const upperB = b.date.toUpperCase();
-                    const isBCE_A = upperA.includes('BCE') || upperA.includes('BC');
-                    const isBCE_B = upperB.includes('BCE') || upperB.includes('BC');
-
-                    // Both BCE - lower number is newer
-                    if (isBCE_A && isBCE_B) {
-                        return yearA - yearB;
-                    }
-                    // Both CE - higher number is newer
-                    else if (!isBCE_A && !isBCE_B) {
-                        return yearB - yearA;
-                    }
-                    // CE before BCE
-                    else if (!isBCE_A && isBCE_B) {
-                        return -1;
-                    }
-                    else {
-                        return 1;
-                    }
-                });
+                return sorted.sort((a, b) => compareByDate(a, b, false));
 
             default:
                 return sorted;
         }
     };
     // Apply sorting to artworks
-    const sortedArtworks = sortArtworks(searchedArtworks);
+    const sortedArtworks = sortArtworks(searchedArtworks, sortOption);
 
     const handleCheckboxClick = (e, artwork) => {
         e.stopPropagation(); // Prevent navigating when clicking checkbox
