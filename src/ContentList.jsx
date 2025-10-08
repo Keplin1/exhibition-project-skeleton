@@ -86,23 +86,65 @@ const ContentList = ({ searchTerm }) => {
 
             case 'date-asc':
                 return sorted.sort((a, b) => {
-                    // Extract first year from date string for sorting
-                    const yearA = parseInt(a.date.match(/\d+/)?.[0]) || 0;
-                    const yearB = parseInt(b.date.match(/\d+/)?.[0]) || 0;
-                    return yearA - yearB;
-                });
+                    const matchA = a.date.match(/\d+/);
+                    const matchB = b.date.match(/\d+/);
 
+                    const yearA = matchA ? parseInt(matchA[0]) : 0;
+                    const yearB = matchB ? parseInt(matchB[0]) : 0;
+
+                    // More specific BCE check - look for "BCE", "BC", or "B.C."
+                    const isBCE_A = /\bB\.?C\.?E?\.?\b/i.test(a.date);
+                    const isBCE_B = /\bB\.?C\.?E?\.?\b/i.test(b.date);
+
+                    // Both BCE - higher number is older
+                    if (isBCE_A && isBCE_B) {
+                        return yearB - yearA;  // 700 BCE before 420 BCE
+                    }
+                    // Both CE - lower number is older
+                    else if (!isBCE_A && !isBCE_B) {
+                        return yearA - yearB;
+                    }
+                    // BCE before CE (BCE is older)
+                    else if (isBCE_A && !isBCE_B) {
+                        return -1;
+                    }
+                    else {
+                        return 1;
+                    }
+                });
             case 'date-desc':
                 return sorted.sort((a, b) => {
-                    const yearA = parseInt(a.date.match(/\d+/)?.[0]) || 0;
-                    const yearB = parseInt(b.date.match(/\d+/)?.[0]) || 0;
-                    return yearB - yearA;
-                });
+                    const matchA = a.date.match(/\d+/);
+                    const matchB = b.date.match(/\d+/);
 
-            default:
-                return sorted;
+                    const yearA = matchA ? parseInt(matchA[0]) : 0;
+                    const yearB = matchB ? parseInt(matchB[0]) : 0;
+
+                    // Debug: uncomment to see what's being extracted
+                    console.log('Date A:', a.date, '→ Year:', yearA);
+                    console.log('Date B:', b.date, '→ Year:', yearB);
+
+                    const isBCE_A = /\bB\.?C\.?E?\.?\b/i.test(a.date);
+                    const isBCE_B = /\bB\.?C\.?E?\.?\b/i.test(b.date);
+
+                    // Both BCE - lower number is newer
+                    if (isBCE_A && isBCE_B) {
+                        return yearA - yearB;
+                    }
+                    // Both CE - higher number is newer
+                    else if (!isBCE_A && !isBCE_B) {
+                        return yearB - yearA;
+                    }
+                    // CE before BCE (CE is newer)
+                    else if (!isBCE_A && isBCE_B) {
+                        return -1;
+                    }
+                    else {
+                        return 1;
+                    }
+                });
         }
-    };
+    }
 
     // Apply sorting to artworks
     const sortedArtworks = sortArtworks(searchedArtworks);
