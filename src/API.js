@@ -20,6 +20,12 @@ const searchVamArtworks = async (searchTerm) => {
     return response.data.records;
 };
 
+// Function to fetch full V&A artwork details (including description)
+export const fetchVamArtworkDetails = async (systemNumber) => {
+    const response = await axios.get(`https://api.vam.ac.uk/v2/object/${systemNumber}`);
+    return response.data.record;
+};
+
 // Function to normalise Cleveland API data
 // because the data structures are different, we need to map them to a common format
 const normaliseClevelandData = (artworks) => {
@@ -34,6 +40,7 @@ const normaliseClevelandData = (artworks) => {
         },
         creator: artwork.creators?.[0]?.description || 'Unknown',
         date: artwork.creation_date || '',
+        url: artwork.url || null,
         rawData: artwork
     }));
 };
@@ -49,6 +56,7 @@ const normaliseVamData = (artworks) => {
 
             return {
                 id: `vam-${artwork.systemNumber}`,
+                systemNumber: artwork.systemNumber,
                 title: artwork._primaryTitle || 'Untitled',
                 source: 'Victoria & Albert Museum',
                 images: {
@@ -58,6 +66,7 @@ const normaliseVamData = (artworks) => {
                 },
                 creator: artwork._primaryMaker?.name || 'Unknown',
                 date: artwork._primaryDate || '',
+                url: `https://collections.vam.ac.uk/item/${artwork.systemNumber}/`,
                 rawData: artwork
             };
         });

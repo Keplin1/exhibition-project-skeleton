@@ -1,9 +1,10 @@
 import { useParams, Link } from 'react-router-dom';
 
 
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ItemContext } from './contexts/ItemContext';
 import { useCollection } from './contexts/CollectionContext';
+import { fetchVamArtworkDetails } from './API';
 
 const ItemPage = () => {
     const { itemId } = useParams();
@@ -12,9 +13,29 @@ const ItemPage = () => {
 
     const { collection } = useCollection();
 
+    const [vamDetails, setVamDetails] = useState(null);
+    const [_, setLoadingDetails] = useState(false);
+
     // Find the artwork by ID, handling string/number conversion
     const artwork = items.find((currentItem) => currentItem.id.toString() === itemId)
         || collection.find((currentItem) => currentItem.id.toString() === itemId);
+
+    // Fetch V&A details if this is a V&A artwork
+    useEffect(() => {
+        if (artwork && artwork.systemNumber) {
+            setLoadingDetails(true);
+
+            fetchVamArtworkDetails(artwork.systemNumber)
+                .then(details => {
+                    setVamDetails(details);
+                    setLoadingDetails(false);
+                })
+                .catch(error => {
+                    console.error('Error fetching V&A details:', error);
+                    setLoadingDetails(false);
+                });
+        }
+    }, [artwork]);
 
     // If no artwork data is found, show error
     if (!artwork) {
@@ -115,11 +136,16 @@ const ItemPage = () => {
                             {artwork.rawData && (
                                 <div className="space-y-3">
                                     {/* Medium/Technique */}
-                                    {(artwork.rawData.technique || artwork.rawData.medium || artwork.rawData.materials) && (
+                                    {(artwork.rawData.technique || artwork.rawData.medium || artwork.rawData.materials || vamDetails?.materialsAndTechniques) && (
                                         <div className="border-b border-gray-200 pb-3">
                                             <h2 className="text-lg font-semibold text-gray-700 mb-1">Medium/Materials</h2>
                                             <p className="text-gray-600">
                                                 {(() => {
+                                                    // Check for V&A materials first
+                                                    if (vamDetails?.materialsAndTechniques) {
+                                                        return vamDetails.materialsAndTechniques;
+                                                    }
+
                                                     const technique = artwork.rawData.technique;
                                                     const medium = artwork.rawData.medium;
                                                     const materials = artwork.rawData.materials;
@@ -137,11 +163,16 @@ const ItemPage = () => {
                                     )}
 
                                     {/* Description */}
-                                    {(artwork.rawData.wall_description || artwork.rawData.description || artwork.rawData.briefDescription) && (
+                                    {(artwork.rawData.wall_description || artwork.rawData.description || artwork.rawData.briefDescription || vamDetails?.summaryDescription) && (
                                         <div className="border-b border-gray-200 pb-3">
                                             <h2 className="text-lg font-semibold text-gray-700 mb-1">Description</h2>
                                             <p className="text-gray-600 leading-relaxed">
                                                 {(() => {
+                                                    // Check for V&A description first
+                                                    if (vamDetails?.summaryDescription) {
+                                                        return vamDetails.summaryDescription;
+                                                    }
+
                                                     const description = artwork.rawData.wall_description ||
                                                         artwork.rawData.description ||
                                                         artwork.rawData.briefDescription;
@@ -154,13 +185,13 @@ const ItemPage = () => {
                             )}
 
                             {/* Museum Link */}
-                            {artwork.rawData?.url && (
+                            {artwork.url && (
                                 <div className="pt-4 text-center">
                                     <a
-                                        href={artwork.rawData.url}
+                                        href={artwork.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-block px-4 py-2 bg-blue-600 rounded hover:bg-blue-100 transition-colors"
+                                        className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                                     >
                                         View on Museum Website
                                     </a>
