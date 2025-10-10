@@ -1,41 +1,28 @@
 import { useParams, Link } from 'react-router-dom';
 
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { ItemContext } from './contexts/ItemContext';
 import { useCollection } from './contexts/CollectionContext';
-import { fetchVamArtworkDetails } from './API';
+import { enrichVamArtwork } from './utils/artworkEnrichment';
 
 const ItemPage = () => {
     const { itemId } = useParams();
 
-    const { items } = useContext(ItemContext)
+    const { items, setItems } = useContext(ItemContext)
 
-    const { collection } = useCollection();
-
-    const [vamDetails, setVamDetails] = useState(null);
-    const [_, setLoadingDetails] = useState(false);
+    const { collection, updateCollectionItem } = useCollection();
 
     // Find the artwork by ID, handling string/number conversion
-    const artwork = items.find((currentItem) => currentItem.id.toString() === itemId)
+    let artwork = items.find((currentItem) => currentItem.id.toString() === itemId)
         || collection.find((currentItem) => currentItem.id.toString() === itemId);
 
     // Fetch V&A details if this is a V&A artwork
     useEffect(() => {
-        if (artwork && artwork.systemNumber) {
-            setLoadingDetails(true);
-
-            fetchVamArtworkDetails(artwork.systemNumber)
-                .then(details => {
-                    setVamDetails(details);
-                    setLoadingDetails(false);
-                })
-                .catch(error => {
-                    console.error('Error fetching V&A details:', error);
-                    setLoadingDetails(false);
-                });
+        if (artwork && artwork.systemNumber && !artwork.description) {
+            enrichVamArtwork(artwork, items, setItems, collection, updateCollectionItem);
         }
-    }, [artwork]);
+    }, [artwork?.id]);
 
     // If no artwork data is found, show error
     if (!artwork) {
@@ -132,55 +119,26 @@ const ItemPage = () => {
                                 </p>
                             </div>
 
-                            {/* Additional Details from Raw Data */}
-                            {artwork.rawData && (
-                                <div className="space-y-3">
-                                    {/* Medium/Technique */}
-                                    {(artwork.rawData.technique || artwork.rawData.medium || artwork.rawData.materials || vamDetails?.materialsAndTechniques) && (
-                                        <div className="border-b border-gray-200 pb-3">
-                                            <h2 className="text-lg font-semibold text-gray-700 mb-1">Medium/Materials</h2>
-                                            <p className="text-gray-600">
-                                                {(() => {
-                                                    // Check for V&A materials first
-                                                    if (vamDetails?.materialsAndTechniques) {
-                                                        return vamDetails.materialsAndTechniques;
-                                                    }
+                            {/* Medium/Technique */}
+                            {artwork.materials && (
+                                <div className="border-b border-gray-200 pb-3">
+                                    <h2 className="text-lg font-semibold text-gray-700 mb-1">Medium/Materials</h2>
+                                    <p className="text-gray-600">
+                                        {artwork.materials}
+                                    </p>
+                                </div>
+                            )}
 
-                                                    const technique = artwork.rawData.technique;
-                                                    const medium = artwork.rawData.medium;
-                                                    const materials = artwork.rawData.materials;
-
-                                                    if (technique && typeof technique === 'string') return technique;
-                                                    if (medium && typeof medium === 'string') return medium;
-                                                    if (materials && Array.isArray(materials)) return materials.join(', ');
-                                                    if (materials && typeof materials === 'string') return materials;
-
-                                                    // Fallback for objects
-                                                    return JSON.stringify(technique || medium || materials);
-                                                })()}
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    {/* Description */}
-                                    {(artwork.rawData.wall_description || artwork.rawData.description || artwork.rawData.briefDescription || vamDetails?.summaryDescription) && (
-                                        <div className="border-b border-gray-200 pb-3">
-                                            <h2 className="text-lg font-semibold text-gray-700 mb-1">Description</h2>
-                                            <p className="text-gray-600 leading-relaxed">
-                                                {(() => {
-                                                    // Check for V&A description first
-                                                    if (vamDetails?.summaryDescription) {
-                                                        return vamDetails.summaryDescription;
-                                                    }
-
-                                                    const description = artwork.rawData.wall_description ||
-                                                        artwork.rawData.description ||
-                                                        artwork.rawData.briefDescription;
-                                                    return typeof description === 'string' ? description : JSON.stringify(description);
-                                                })()}
-                                            </p>
-                                        </div>
-                                    )}
+                            {/* Description */}
+                            {artwork.description && (
+                                <div className="border-b border-gray-200 pb-3">
+                                    <h2 className="text-lg font-semibold text-gray-700 mb-1">Description</h2>
+                                    <p
+                                        className="text-gray-600 leading-relaxed"
+                                        dangerouslySetInnerHTML={{
+                                            __html: artwork.description
+                                        }}
+                                    />
                                 </div>
                             )}
 

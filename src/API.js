@@ -41,6 +41,8 @@ const normaliseClevelandData = (artworks) => {
         creator: artwork.creators?.[0]?.description || 'Unknown',
         date: artwork.creation_date || '',
         url: artwork.url || null,
+        description: artwork.wall_description || artwork.description || null,
+        materials: artwork.technique || null,
         rawData: artwork
     }));
 };
@@ -67,6 +69,8 @@ const normaliseVamData = (artworks) => {
                 creator: artwork._primaryMaker?.name || 'Unknown',
                 date: artwork._primaryDate || '',
                 url: `https://collections.vam.ac.uk/item/${artwork.systemNumber}/`,
+                description: null, // Will be fetched later when viewing item details
+                materials: null, // Will be fetched later when viewing item details
                 rawData: artwork
             };
         });

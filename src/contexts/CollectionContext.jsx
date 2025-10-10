@@ -30,6 +30,13 @@ export const CollectionProvider = ({ children }) => {
         setCollection(collection.filter(item => item.id !== artworkId));
     };
 
+    // Update artwork in collection
+    const updateCollectionItem = (artworkId, updatedArtwork) => {
+        setCollection(collection.map(item =>
+            item.id === artworkId ? updatedArtwork : item
+        ));
+    };
+
     // Check if artwork is in collection
     const isInCollection = (artworkId) => {
         return collection.some(item => item.id === artworkId);
@@ -55,6 +62,7 @@ export const CollectionProvider = ({ children }) => {
         selectedItems,
         addToCollection,
         removeFromCollection,
+        updateCollectionItem,
         isInCollection,
         toggleSelection,
         isSelected
