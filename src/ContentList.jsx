@@ -148,16 +148,18 @@ const ContentList = ({ searchTerm }) => {
 
             {/* Save to Collection Button */}
             {selectedItems.length > 0 && (
-                <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded flex justify-between items-center">
-                    <span className="text-green-800 font-medium">
-                        {selectedItems.length} artwork(s) selected
-                    </span>
-                    <button
-                        onClick={handleSaveToCollection}
-                        className="px-4 py-2 bg-green-200 text-gray-800 rounded hover:bg-green-300"
-                    >
-                        Save to My Collection
-                    </button>
+                <div className="fixed bottom-6 left-0 right-0 z-2 px-4 animate-slide-up">
+                    <div className="max-w-4xl mx-auto p-3 bg-green-50 border border-green-200 rounded flex justify-between items-center shadow-lg">
+                        <span className="text-green-800 font-medium">
+                            {selectedItems.length} artwork(s) selected
+                        </span>
+                        <button
+                            onClick={handleSaveToCollection}
+                            className="px-4 py-2 bg-green-200 text-gray-800 rounded hover:bg-green-300"
+                        >
+                            Save to My Collection
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -169,14 +171,14 @@ const ContentList = ({ searchTerm }) => {
             </div>
 
             {/* Results Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24">
                 {sortedArtworks.map((artwork) => (
                     <div
                         key={artwork.id}
                         className="border border-gray-300 rounded overflow-hidden hover:shadow-lg transition-shadow relative"
                     >
                         {/* Checkbox - Top Right */}
-                        <div className="absolute top-2 right-2 z-10">
+                        <div className="absolute top-2 right-2 z-1">
                             <input
                                 type="checkbox"
                                 checked={isSelected(artwork.id)}
@@ -188,7 +190,7 @@ const ContentList = ({ searchTerm }) => {
 
                         {/* Already in Collection Badge */}
                         {isInCollection(artwork.id) && (
-                            <div className="absolute top-2 left-2 z-10 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                            <div className="absolute top-2 left-2 z-1 bg-green-600 text-white text-xs px-2 py-1 rounded">
                                 Saved
                             </div>
                         )}
@@ -221,11 +223,7 @@ const ContentList = ({ searchTerm }) => {
                             onClick={() => handleItemClick(artwork)}
                             className="p-3 cursor-pointer"
                         >
-                            <h3 className="font-medium text-sm leading-tight overflow-hidden mb-1" style={{
-                                display: '-webkit-box',
-                                WebkitLineClamp: 2,
-                                WebkitBoxOrient: 'vertical'
-                            }}>
+                            <h3 className="font-medium text-sm leading-tight overflow-hidden mb-1 line-clamp-2">
                                 {artwork.title || 'Untitled'}
                             </h3>
                             <p className="text-xs text-gray-500 truncate">
