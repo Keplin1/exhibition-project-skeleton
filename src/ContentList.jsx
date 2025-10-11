@@ -13,7 +13,6 @@ const ContentList = ({ searchTerm }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    const [viewMode, setViewMode] = useState('grid');
     const [sortOption, setSortOption] = useState(''); // Sorting option
 
     const { setItems } = useContext(ItemContext);
@@ -26,7 +25,6 @@ const ContentList = ({ searchTerm }) => {
     } = useCollection();
 
     const navigate = useNavigate();
-
 
     // API call 
     useEffect(() => {
@@ -200,9 +198,9 @@ const ContentList = ({ searchTerm }) => {
                             onClick={() => handleItemClick(artwork)}
                             className="aspect-square bg-gray-200 flex items-center justify-center cursor-pointer"
                         >
-                            {artwork.images.web.url ? (
+                            {artwork.image ? (
                                 <img
-                                    src={artwork.images.web.url}
+                                    src={artwork.image}
                                     alt={artwork.title || 'Artwork'}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
@@ -212,7 +210,7 @@ const ContentList = ({ searchTerm }) => {
                                 />
                             ) : null}
                             <div
-                                className={`text-gray-500 text-sm ${artwork.images.web.url ? 'hidden' : 'block'}`}
+                                className={`text-gray-500 text-sm ${artwork.image ? 'hidden' : 'block'}`}
                             >
                                 No Image
                             </div>

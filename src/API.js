@@ -33,11 +33,7 @@ const normaliseClevelandData = (artworks) => {
         id: `cleveland-${artwork.id}`,
         title: artwork.title,
         source: 'Cleveland Museum of Art',
-        images: {
-            web: {
-                url: artwork.images?.web?.url || null
-            }
-        },
+        image: artwork.images?.web?.url || null,
         creator: artwork.creators?.[0]?.description || 'Unknown',
         date: artwork.creation_date || '',
         url: artwork.url || null,
@@ -61,11 +57,7 @@ const normaliseVamData = (artworks) => {
                 systemNumber: artwork.systemNumber,
                 title: artwork._primaryTitle || 'Untitled',
                 source: 'Victoria & Albert Museum',
-                images: {
-                    web: {
-                        url: fullImageUrl
-                    }
-                },
+                image: fullImageUrl,
                 creator: artwork._primaryMaker?.name || 'Unknown',
                 date: artwork._primaryDate || '',
                 url: `https://collections.vam.ac.uk/item/${artwork.systemNumber}/`,

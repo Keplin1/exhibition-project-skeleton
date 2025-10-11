@@ -68,9 +68,9 @@ const ItemPage = () => {
                     {/* Image Section - Centered */}
                     <div className="flex justify-center mb-6">
                         <div className="max-w-md w-full aspect-square bg-gray-100 flex items-center justify-center rounded-lg">
-                            {artwork.images?.web?.url ? (
+                            {artwork.image ? (
                                 <img
-                                    src={artwork.images.web.url}
+                                    src={artwork.image}
                                     alt={artwork.title || 'Artwork'}
                                     className="w-full h-full object-contain rounded-lg"
                                     onError={(e) => {
@@ -80,7 +80,7 @@ const ItemPage = () => {
                                 />
                             ) : null}
                             <div
-                                className={`text-gray-400 text-lg ${artwork.images?.web?.url ? 'hidden' : 'flex'} items-center justify-center w-full h-full`}
+                                className={`text-gray-400 text-lg ${artwork.image ? 'hidden' : 'flex'} items-center justify-center w-full h-full`}
                             >
                                 No Image Available
                             </div>

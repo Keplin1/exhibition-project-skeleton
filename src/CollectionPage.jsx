@@ -60,9 +60,9 @@ const CollectionPage = () => {
                             onClick={() => handleItemClick(artwork)}
                             className="aspect-square bg-gray-200 flex items-center justify-center cursor-pointer"
                         >
-                            {artwork.images.web.url ? (
+                            {artwork.image ? (
                                 <img
-                                    src={artwork.images.web.url}
+                                    src={artwork.image}
                                     alt={artwork.title || 'Artwork'}
                                     className="w-full h-full object-cover"
                                 />

@@ -1,14 +1,13 @@
 
 import { useState } from "react";
 
-const SearchBar = ({ searchTerm, setSearchTerm }) => {
+const SearchBar = ({ setSearchTerm }) => {
 
     const presetSearches = ['sculpture', 'modern art', 'photography', 'landscapes', 'portraits', 'victorian art', 'pottery', 'fine art', 'ancient art'];
 
     const [searchInput, setSearchInput] = useState("");
     const handlePresetClick = (preset) => {
         setSearchTerm(preset);
-        // onSearch(preset);
     };
 
     const handleChange = (event) => {
@@ -40,7 +39,6 @@ const SearchBar = ({ searchTerm, setSearchTerm }) => {
                 <button
                     onClick={handleSubmit}
                     className="px-6 py-4 bg-blue-200 text-black rounded disabled:opacity-50"
-
                 >
                     search
                 </button>

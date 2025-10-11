@@ -23,7 +23,7 @@ function App() {
               path="/"
               element={
                 <>
-                  <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                  <SearchBar setSearchTerm={setSearchTerm} />
                   <ContentList searchTerm={searchTerm} />
                 </>
               }
