@@ -12,7 +12,6 @@ const ContentList = ({ searchTerm }) => {
     const [searchedArtworks, setSearchedArtworks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
-    const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [sortOption, setSortOption] = useState(''); // Sorting option
     const [currentPage, setCurrentPage] = useState(1);
@@ -29,66 +28,65 @@ const ContentList = ({ searchTerm }) => {
 
     const navigate = useNavigate();
 
+    // Helper to update artworks state
+    const updateArtworks = (newArtworks, append = false) => {
+        const updatedList = append ? [...searchedArtworks, ...newArtworks] : newArtworks;
+        setSearchedArtworks(updatedList);
+        setItems(updatedList);
+    };
 
-    // API call - Initial fetch
-    useEffect(() => {
-        if (!searchTerm) return;
+    // Initial fetch - replaces existing artworks
+    const fetchInitialArtworks = async () => {
 
-        const fetchArtworks = async () => {
-            setLoading(true);
-            setError(false);
-            setErrorMessage("");
-            setCurrentPage(1);
-            setHasMore(true);
+        // Reset our states
+        setLoading(true);
+        setErrorMessage("");
+        setCurrentPage(1);
+        setHasMore(true);
 
-            let artworks;
+        try {
+            // Try to find artworks based on the search term
+            const artworks = await searchArtwork(searchTerm, 1);
 
-            try {
-                artworks = await searchArtwork(searchTerm, 1);
-                console.log(artworks);
-                setSearchedArtworks(artworks);
-                setItems(artworks);
+            console.log(artworks);
 
-                // If we got fewer results than expected, there might not be more
-                if (artworks.length < 30) {
-                    setHasMore(false);
-                }
-            } catch (error) {
-                console.log(error.message);
-                setError(true);
-                setErrorMessage(error.message);
-            } finally {
-                setLoading(false);
-            }
+            // Update our artworks state/ array
+            updateArtworks(artworks);
+            // Determine whether we have more results to load or not
+            setHasMore(artworks.length >= 30);
+        } catch (error) {
+            console.log(error.message);
+            setErrorMessage(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Load more - appends to existing artworks
+    const loadMoreArtworks = async () => {
+        // If there is nothing more to load or already loading, do nothing
+        if (loadingMore || !hasMore) {
+            return;
         }
 
-        fetchArtworks();
-
-    }, [searchTerm]);
-
-    // Load more artworks
-    const loadMoreArtworks = async () => {
-        if (loadingMore || !hasMore) return;
-
+        // Say that we are loading more artworks to the user
         setLoadingMore(true);
+
+        // Determine the next page to load
         const nextPage = currentPage + 1;
 
         try {
-            const moreArtworks = await searchArtwork(searchTerm, nextPage);
+            // Find more artworks to display, based on search term and our determined next page
+            const artworks = await searchArtwork(searchTerm, nextPage);
 
-            if (moreArtworks.length === 0) {
-                setHasMore(false);
-            } else {
-                const updatedArtworks = [...searchedArtworks, ...moreArtworks];
-                setSearchedArtworks(updatedArtworks);
-                setItems(updatedArtworks);
+            // If we have artworks from the result of the call, append them to our array
+            if (artworks.length > 0) {
+                updateArtworks(artworks, true);
                 setCurrentPage(nextPage);
-
-                // If we got fewer results than expected, no more pages
-                if (moreArtworks.length < 30) {
-                    setHasMore(false);
-                }
             }
+
+            // If we have less than 30 results, say that we don't have more
+            setHasMore(artworks.length >= 30);
         } catch (error) {
             console.error('Error loading more artworks:', error);
         } finally {
@@ -96,12 +94,23 @@ const ContentList = ({ searchTerm }) => {
         }
     };
 
+    // API call - Initial fetch of the artworks based on search term
+    useEffect(() => {
+
+        // Don't search if searchTerm is empty
+        if (!searchTerm) {
+            return;
+        }
+
+        // Fire off the request(s) to fetch the artworks
+        fetchInitialArtworks();
+    }, [searchTerm]);
+
     // Infinite scroll handler
     useEffect(() => {
         const handleScroll = () => {
-            // Check if user is near bottom (within 500px)
-            const scrolledToBottom =
-                window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500;
+            // Check if user is near bottom (within 500px - so that we can fetch more before they actually reach the bottom)
+            const scrolledToBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500;
 
             if (scrolledToBottom && !loadingMore && hasMore && searchedArtworks.length > 0) {
                 loadMoreArtworks();
@@ -113,6 +122,7 @@ const ContentList = ({ searchTerm }) => {
     }, [loadingMore, hasMore, searchedArtworks, currentPage]);
 
 
+    // The sorting function
     const sortArtworks = (artworksToSort, sortOption) => {
         if (!sortOption) return artworksToSort;
 
@@ -159,15 +169,6 @@ const ContentList = ({ searchTerm }) => {
     // Apply sorting to artworks
     const sortedArtworks = sortArtworks(searchedArtworks, sortOption);
 
-    const handleCheckboxClick = (e, artwork) => {
-        e.stopPropagation(); // Prevent navigating when clicking checkbox
-        toggleSelection(artwork);
-    };
-
-    const handleSaveToCollection = () => {
-        addToCollection();
-    };
-
     if (loading) {
         return (
             <div className="text-center py-8">
@@ -176,7 +177,7 @@ const ContentList = ({ searchTerm }) => {
         );
     }
 
-    if (error) {
+    if (errorMessage) {
         return (
             <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
                 {errorMessage}
@@ -212,7 +213,7 @@ const ContentList = ({ searchTerm }) => {
                             {selectedItems.length} artwork(s) selected
                         </span>
                         <button
-                            onClick={handleSaveToCollection}
+                            onClick={addToCollection}
                             className="px-4 py-2 bg-green-200 text-gray-800 rounded hover:bg-green-300"
                         >
                             Save to My Collection
@@ -233,7 +234,10 @@ const ContentList = ({ searchTerm }) => {
                             <input
                                 type="checkbox"
                                 checked={isSelected(artwork.id)}
-                                onChange={(e) => handleCheckboxClick(e, artwork)}
+                                onChange={(e) => {
+                                    e.stopPropagation();
+                                    toggleSelection(artwork);
+                                }}
                                 className="w-5 h-5 cursor-pointer"
                                 disabled={isInCollection(artwork.id)}
                             />
