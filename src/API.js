@@ -9,14 +9,15 @@ const vamApi = axios.create({
 });
 
 // Function to search Cleveland Museum API
-const searchClevelandArtworks = async (searchTerm) => {
-    const response = await clevelandApi.get(`?q=${searchTerm}&has_image=1&limit=15`);
+const searchClevelandArtworks = async (searchTerm, page = 1) => {
+    const skip = (page - 1) * 15;
+    const response = await clevelandApi.get(`?q=${searchTerm}&has_image=1&limit=15&skip=${skip}`);
     return response.data.data;
 };
 
 // Function to search V&A Museum API
-const searchVamArtworks = async (searchTerm) => {
-    const response = await vamApi.get(`search?q=${searchTerm}&images_exist=1&page_size=15`);
+const searchVamArtworks = async (searchTerm, page = 1) => {
+    const response = await vamApi.get(`search?q=${searchTerm}&images_exist=1&page_size=15&page=${page}`);
     return response.data.records;
 };
 
@@ -69,12 +70,12 @@ const normaliseVamData = (artworks) => {
 };
 
 // Main search function that combines both APIs
-const searchArtwork = async (searchTerm) => {
+const searchArtwork = async (searchTerm, page = 1) => {
     try {
         // Call both APIs simultaneously
         const [clevelandResults, vamResults] = await Promise.allSettled([
-            searchClevelandArtworks(searchTerm),
-            searchVamArtworks(searchTerm)
+            searchClevelandArtworks(searchTerm, page),
+            searchVamArtworks(searchTerm, page)
         ]);
 
         let combinedResults = [];

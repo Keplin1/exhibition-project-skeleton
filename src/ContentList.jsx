@@ -11,9 +11,12 @@ const ContentList = ({ searchTerm }) => {
 
     const [searchedArtworks, setSearchedArtworks] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [error, setError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [sortOption, setSortOption] = useState(''); // Sorting option
+    const [currentPage, setCurrentPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
 
     const { setItems } = useContext(ItemContext);
     const {
@@ -26,7 +29,8 @@ const ContentList = ({ searchTerm }) => {
 
     const navigate = useNavigate();
 
-    // API call 
+
+    // API call - Initial fetch
     useEffect(() => {
         if (!searchTerm) return;
 
@@ -34,14 +38,21 @@ const ContentList = ({ searchTerm }) => {
             setLoading(true);
             setError(false);
             setErrorMessage("");
+            setCurrentPage(1);
+            setHasMore(true);
 
             let artworks;
 
             try {
-                artworks = await searchArtwork(searchTerm);
+                artworks = await searchArtwork(searchTerm, 1);
                 console.log(artworks);
                 setSearchedArtworks(artworks);
-                setItems(artworks)
+                setItems(artworks);
+
+                // If we got fewer results than expected, there might not be more
+                if (artworks.length < 30) {
+                    setHasMore(false);
+                }
             } catch (error) {
                 console.log(error.message);
                 setError(true);
@@ -54,6 +65,52 @@ const ContentList = ({ searchTerm }) => {
         fetchArtworks();
 
     }, [searchTerm]);
+
+    // Load more artworks
+    const loadMoreArtworks = async () => {
+        if (loadingMore || !hasMore) return;
+
+        setLoadingMore(true);
+        const nextPage = currentPage + 1;
+
+        try {
+            const moreArtworks = await searchArtwork(searchTerm, nextPage);
+
+            if (moreArtworks.length === 0) {
+                setHasMore(false);
+            } else {
+                const updatedArtworks = [...searchedArtworks, ...moreArtworks];
+                setSearchedArtworks(updatedArtworks);
+                setItems(updatedArtworks);
+                setCurrentPage(nextPage);
+
+                // If we got fewer results than expected, no more pages
+                if (moreArtworks.length < 30) {
+                    setHasMore(false);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading more artworks:', error);
+        } finally {
+            setLoadingMore(false);
+        }
+    };
+
+    // Infinite scroll handler
+    useEffect(() => {
+        const handleScroll = () => {
+            // Check if user is near bottom (within 500px)
+            const scrolledToBottom =
+                window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 500;
+
+            if (scrolledToBottom && !loadingMore && hasMore && searchedArtworks.length > 0) {
+                loadMoreArtworks();
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [loadingMore, hasMore, searchedArtworks, currentPage]);
 
 
     const sortArtworks = (artworksToSort, sortOption) => {
@@ -98,6 +155,7 @@ const ContentList = ({ searchTerm }) => {
                 return sorted;
         }
     };
+
     // Apply sorting to artworks
     const sortedArtworks = sortArtworks(searchedArtworks, sortOption);
 
@@ -162,13 +220,6 @@ const ContentList = ({ searchTerm }) => {
                     </div>
                 </div>
             )}
-
-            {/* Results Count */}
-            <div className="mb-4">
-                <p className="text-gray-600">
-                    Found {sortedArtworks.length} artwork(s)
-                </p>
-            </div>
 
             {/* Results Grid */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24">
@@ -238,6 +289,21 @@ const ContentList = ({ searchTerm }) => {
                     </div>
                 ))}
             </div>
+
+            {/* Loading More Spinner */}
+            {loadingMore && (
+                <div className="text-center py-8">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                    <p className="mt-2 text-gray-600">Loading more artworks...</p>
+                </div>
+            )}
+
+            {/* No More Results Message */}
+            {!hasMore && searchedArtworks.length > 0 && (
+                <div className="text-center py-8">
+                    <p className="text-gray-500">No more artworks to load</p>
+                </div>
+            )}
         </div>
     );
 };
