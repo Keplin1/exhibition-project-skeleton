@@ -4,7 +4,7 @@ const SortControls = ({ sortOption, setSortOption }) => {
     };
 
     return (
-        <div className="mb-4 p-3 bg-gray-100 rounded">
+        <div className="mb-4 p-3 bg-gray-100 rounded" role="region" aria-label="Sort controls">
             <div className="flex items-center gap-3">
                 <label htmlFor="sort-select" className="text-sm font-medium text-gray-700">
                     Sort by:
@@ -15,6 +15,7 @@ const SortControls = ({ sortOption, setSortOption }) => {
                     value={sortOption}
                     onChange={handleSortChange}
                     className="px-3 py-2 border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                    aria-label="Sort artworks by different criteria"
                 >
                     <option value="">None</option>
                     <option value="artist-asc">Artist Name (A → Z)</option>

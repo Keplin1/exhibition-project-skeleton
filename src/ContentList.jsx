@@ -171,7 +171,7 @@ const ContentList = ({ searchTerm }) => {
 
     if (loading) {
         return (
-            <div className="text-center py-8">
+            <div className="text-center py-8" role="status" aria-live="polite">
                 <p>Loading artworks...</p>
             </div>
         );
@@ -179,7 +179,7 @@ const ContentList = ({ searchTerm }) => {
 
     if (errorMessage) {
         return (
-            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            <div className="mb-4 p-3 bg-red-100 text-red-700 rounded" role="alert" aria-live="assertive">
                 {errorMessage}
             </div>
         );
@@ -187,7 +187,7 @@ const ContentList = ({ searchTerm }) => {
 
     if (searchedArtworks.length === 0 && searchTerm) {
         return (
-            <div className="text-center py-8">
+            <div className="text-center py-8" role="status">
                 <p className="text-gray-500">No results found for "{searchTerm}"</p>
             </div>
         );
@@ -207,14 +207,19 @@ const ContentList = ({ searchTerm }) => {
 
             {/* Save to Collection Button */}
             {selectedItems.length > 0 && (
-                <div className="fixed bottom-6 left-0 right-0 z-2 px-4 animate-slide-up">
+                <div
+                    className="fixed bottom-6 left-0 right-0 z-2 px-4 animate-slide-up"
+                    role="status"
+                    aria-live="polite"
+                >
                     <div className="max-w-4xl mx-auto p-3 bg-green-50 border border-green-200 rounded flex justify-between items-center shadow-lg">
-                        <span className="text-green-800 font-medium">
+                        <span className="text-green-800 font-medium" aria-label={`${selectedItems.length} artworks selected`}>
                             {selectedItems.length} artwork(s) selected
                         </span>
                         <button
                             onClick={addToCollection}
                             className="px-4 py-2 bg-green-200 text-gray-800 rounded hover:bg-green-300"
+                            aria-label={`Save ${selectedItems.length} selected artworks to collection`}
                         >
                             Save to My Collection
                         </button>
@@ -223,11 +228,16 @@ const ContentList = ({ searchTerm }) => {
             )}
 
             {/* Results Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24">
+            <div
+                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24"
+                role="list"
+                aria-label={`Search results for ${searchTerm}: ${sortedArtworks.length} artworks found`}
+            >
                 {sortedArtworks.map((artwork) => (
                     <div
                         key={artwork.id}
                         className="border border-gray-300 rounded overflow-hidden hover:shadow-lg transition-shadow relative"
+                        role="listitem"
                     >
                         {/* Checkbox - Top Right */}
                         <div className="absolute top-2 right-2 z-1">
@@ -240,12 +250,18 @@ const ContentList = ({ searchTerm }) => {
                                 }}
                                 className="w-5 h-5 cursor-pointer"
                                 disabled={isInCollection(artwork.id)}
+                                aria-label={`Select ${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown artist'}${isInCollection(artwork.id) ? ' (already in collection)' : ''}`}
+                                aria-checked={isSelected(artwork.id)}
                             />
                         </div>
 
                         {/* Already in Collection Badge */}
                         {isInCollection(artwork.id) && (
-                            <div className="absolute top-2 left-2 z-1 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                            <div
+                                className="absolute top-2 left-2 z-1 bg-green-600 text-white text-xs px-2 py-1 rounded"
+                                role="status"
+                                aria-label="This artwork is already saved in your collection"
+                            >
                                 Saved
                             </div>
                         )}
@@ -254,11 +270,20 @@ const ContentList = ({ searchTerm }) => {
                         <div
                             onClick={() => handleItemClick(artwork)}
                             className="aspect-square bg-gray-200 flex items-center justify-center cursor-pointer"
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`View details for ${artwork.title || 'Untitled'}`}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handleItemClick(artwork);
+                                }
+                            }}
                         >
                             {artwork.image ? (
                                 <img
                                     src={artwork.image}
-                                    alt={artwork.title || 'Artwork'}
+                                    alt={`${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown artist'}${artwork.date ? `, ${artwork.date}` : ''}`}
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
                                         e.target.style.display = 'none';
@@ -268,6 +293,7 @@ const ContentList = ({ searchTerm }) => {
                             ) : null}
                             <div
                                 className={`text-gray-500 text-sm ${artwork.image ? 'hidden' : 'block'}`}
+                                aria-label="No image available for this artwork"
                             >
                                 No Image
                             </div>
@@ -296,15 +322,15 @@ const ContentList = ({ searchTerm }) => {
 
             {/* Loading More Spinner */}
             {loadingMore && (
-                <div className="text-center py-8">
-                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+                <div className="text-center py-8" role="status" aria-live="polite" aria-busy="true">
+                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" aria-hidden="true"></div>
                     <p className="mt-2 text-gray-600">Loading more artworks...</p>
                 </div>
             )}
 
             {/* No More Results Message */}
             {!hasMore && searchedArtworks.length > 0 && (
-                <div className="text-center py-8">
+                <div className="text-center py-8" role="status">
                     <p className="text-gray-500">No more artworks to load</p>
                 </div>
             )}

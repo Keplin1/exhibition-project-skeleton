@@ -7,7 +7,7 @@ const Header = () => {
     const isCollectionPage = location.pathname === '/collection';
 
     return (
-        <header className="mb-8">
+        <header className="mb-8" role="banner">
             <div className="pr-40">
                 <div>
                     <h1 className="text-3xl font-bold mb-2">Exhibition Curator</h1>
@@ -16,14 +16,15 @@ const Header = () => {
             </div>
 
             {!isCollectionPage && (
-                <div className="fixed top-8 right-8 z-1">
+                <nav className="fixed top-8 right-8 z-1" aria-label="Collection navigation">
                     <Link
                         to="/collection"
                         className="px-4 py-2 text-gray-800 bg-green-200 rounded hover:bg-green-400 transition-colors whitespace-nowrap shadow-md"
+                        aria-label={`View my collection: ${collection.length} ${collection.length === 1 ? 'artwork' : 'artworks'} saved`}
                     >
                         My Collection ({collection.length})
                     </Link>
-                </div>
+                </nav>
             )}
         </header>
     );

@@ -8,8 +8,9 @@ import { fetchVamArtworkDetails } from '../API';
  * @param {Function} setItems - Function to update items array
  * @param {Array} collection - The collection array
  * @param {Function} updateCollectionItem - Function to update collection
+ * @param {Function} setArtwork - Optional function to update local artwork state
  */
-export const enrichVamArtwork = async (artwork, items, setItems, collection, updateCollectionItem) => {
+export const enrichVamArtwork = async (artwork, items, setItems, collection, updateCollectionItem, setArtwork) => {
     if (!artwork.systemNumber || artwork.description) {
         // Not a V&A artwork or already enriched
         return;
@@ -24,6 +25,11 @@ export const enrichVamArtwork = async (artwork, items, setItems, collection, upd
             description: details.summaryDescription || null,
             materials: details.materialsAndTechniques || null
         };
+
+        // Update local state if setter provided
+        if (setArtwork) {
+            setArtwork(enrichedArtwork);
+        }
 
         // Update (replace) the item in items array
         const itemIndex = items.findIndex(item => item.id === artwork.id);
