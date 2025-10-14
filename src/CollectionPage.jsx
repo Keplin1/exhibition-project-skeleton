@@ -91,7 +91,7 @@ const CollectionPage = () => {
                         {/* Info and Remove Button */}
                         <div className="p-3">
                             <h3
-                                onClick={() => handleItemClick(artwork.id)}
+                                onClick={() => handleItemClick(artwork)}
                                 className="font-medium text-sm leading-tight overflow-hidden mb-1 cursor-pointer hover:text-blue-600"
                                 style={{
                                     display: '-webkit-box',
