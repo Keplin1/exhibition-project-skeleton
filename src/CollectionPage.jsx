@@ -98,6 +98,15 @@ const CollectionPage = () => {
                                     WebkitLineClamp: 2,
                                     WebkitBoxOrient: 'vertical'
                                 }}
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`View details for ${artwork.title || 'Untitled'}`}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        handleItemClick(artwork);
+                                    }
+                                }}
                             >
                                 {artwork.title || 'Untitled'}
                             </h3>

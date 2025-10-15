@@ -309,6 +309,15 @@ const ContentList = ({ searchTerm }) => {
                         <div
                             onClick={() => handleItemClick(artwork)}
                             className="p-3 cursor-pointer"
+                            role="button"
+                            tabIndex={0}
+                            aria-label={`View details for ${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown'}`}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault();
+                                    handleItemClick(artwork);
+                                }
+                            }}
                         >
                             <h3 className="font-medium text-sm leading-tight overflow-hidden mb-1 line-clamp-2">
                                 {artwork.title || 'Untitled'}

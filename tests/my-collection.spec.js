@@ -64,3 +64,65 @@ test('adding an item to my collection, then removing it and making sure it is no
     await page.getByRole('button', { name: 'Remove Adeline Ravoux from' }).click();
     await expect(page.getByText('Adeline Ravoux')).not.toBeVisible();
 });
+
+test('keyboard navigation on collection page: tab to artwork and press enter to view details', async ({ page }) => {
+    // Add an item to collection first
+    await page.getByRole('textbox', { name: 'Search for artworks or artists' }).fill('modern');
+    await page.getByRole('button', { name: 'Submit search' }).click();
+    await page.waitForLoadState('networkidle');
+
+    await page.getByText('Adeline Ravoux').waitFor({ state: 'visible', timeout: 5000 });
+    const checkbox = page.getByRole('checkbox', { name: 'Select Adeline Ravoux by' });
+    await checkbox.click();
+    await page.getByRole('button', { name: 'Save 1 selected artworks to' }).click();
+
+    // Navigate to collection page
+    await page.getByTestId('my-collection-button').click();
+    await page.waitForLoadState('networkidle');
+
+    // Use Tab to navigate to the artwork thumbnail
+    // Tab from page start -> Back to Search link -> Artwork thumbnail
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+
+    // Press Enter to view details
+    await page.keyboard.press('Enter');
+
+    // Wait for navigation
+    await page.waitForLoadState('networkidle');
+
+    // Should navigate to item details page
+    await expect(page.getByRole('heading', { name: 'Adeline Ravoux' })).toBeVisible();
+});
+
+test('keyboard navigation on collection page: tab to remove button and press enter', async ({ page }) => {
+    // Add an item to collection first
+    await page.getByRole('textbox', { name: 'Search for artworks or artists' }).fill('modern');
+    await page.getByRole('button', { name: 'Submit search' }).click();
+    await page.waitForLoadState('networkidle');
+
+    await page.getByText('Adeline Ravoux').waitFor({ state: 'visible', timeout: 5000 });
+    const checkbox = page.getByRole('checkbox', { name: 'Select Adeline Ravoux by' });
+    await checkbox.click();
+    await page.getByRole('button', { name: 'Save 1 selected artworks to' }).click();
+
+    // Navigate to collection page
+    await page.getByTestId('my-collection-button').click();
+    await page.waitForLoadState('networkidle');
+
+    // Use Tab to navigate to the remove button
+    // Tab: Back to Search -> Thumbnail -> Title -> Remove button
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+
+    // Press Enter to remove
+    await page.keyboard.press('Enter');
+
+    // Wait for removal
+    await page.waitForTimeout(300);
+
+    // Item should be removed - check that we're back to empty collection state
+    await expect(page.getByText('Your Collection is Empty')).toBeVisible();
+});

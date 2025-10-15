@@ -9,10 +9,10 @@ test('check for all necessary elements to be present on the homepage', async ({ 
   await expect(page).toHaveTitle(/Exhibition Curator/);
   await expect(page.getByRole('heading', { name: 'Exhibition Curator' })).toBeVisible();
   await expect(page.getByText('Search and curate artworks')).toBeVisible(); // search input box
-  await expect(page.getByRole('button', { name: 'Submit search' })).toBeVisible();//search button
+  await expect(page.getByRole('button', { name: 'Submit search' })).toBeVisible();// search button
   await page.getByRole('textbox', { name: 'Search for artworks or artists' }).click();
-  await expect(page.getByRole('link', { name: 'View my collection: 0' })).toBeVisible();//mycollection button
-  await expect(page.getByRole('group', { name: 'Quick search suggestions' })).toBeVisible(); //quick serach optins
+  await expect(page.getByRole('link', { name: 'View my collection: 0' })).toBeVisible();// mycollection button
+  await expect(page.getByRole('group', { name: 'Quick search suggestions' })).toBeVisible(); // quick serach optins
   await expect(page.getByText('Sort by:')).toBeVisible();
   await expect(page.getByLabel('Sort artworks by different')).toBeVisible();
 });
@@ -28,6 +28,62 @@ test('checks that the search bar works and returns results', async ({ page }) =>
   await page.waitForLoadState('networkidle');
 
   // Wait for our artwork to be visible in the results
-  const searchResults = page.getByText(/Adeline/);
-  expect(searchResults.count()).not.toBe(0);
+  await expect(page.getByText(/Adeline/).first()).toBeVisible();
+});
+
+test('keyboard navigation: tab to checkbox and press space to select artwork', async ({ page }) => {
+  // Start from the search input
+  await page.getByRole('textbox', { name: 'Search for artworks or artists' }).focus();
+
+  // Tab through elements to reach the first checkbox
+  // Search input -> Search button -> Quick search buttons (9) -> My Collection button -> Sort dropdown -> First checkbox
+  for (let i = 0; i < 12; i++) {
+    await page.keyboard.press('Tab');
+  }
+
+  // Press Space to check the checkbox
+  await page.keyboard.press('Space');
+
+  // Verify the "Save to Collection" button appears
+  await expect(page.getByRole('button', { name: /Save \d+ selected artworks to/ })).toBeVisible();
+});
+
+test('keyboard navigation: tab to artwork thumbnail and press enter to view details', async ({ page }) => {
+  // Start from the search input
+  await page.getByRole('textbox', { name: 'Search for artworks or artists' }).focus();
+
+  // Tab through elements to reach the first artwork thumbnail
+  // Search input -> Search button -> Quick search buttons (9) -> My Collection button -> Sort dropdown -> Checkbox -> Thumbnail
+  for (let i = 0; i < 13; i++) {
+    await page.keyboard.press('Tab');
+  }
+
+  // Press Enter to navigate
+  await page.keyboard.press('Enter');
+
+  // Wait for navigation
+  await page.waitForLoadState('networkidle');
+
+  // Should navigate to item details page
+  expect(page.url()).toContain('/item/');
+});
+
+test('keyboard navigation: tab to artwork title and press enter to view details', async ({ page }) => {
+  // Start from the search input
+  await page.getByRole('textbox', { name: 'Search for artworks or artists' }).focus();
+
+  // Tab through elements to reach the first artwork title
+  // Search input -> Search button -> Quick search buttons (9) -> My Collection button -> Sort dropdown -> Checkbox -> Thumbnail -> Title
+  for (let i = 0; i < 14; i++) {
+    await page.keyboard.press('Tab');
+  }
+
+  // Press Enter to navigate
+  await page.keyboard.press('Enter');
+
+  // Wait for navigation
+  await page.waitForLoadState('networkidle');
+
+  // Should navigate to item details page
+  expect(page.url()).toContain('/item/');
 });
