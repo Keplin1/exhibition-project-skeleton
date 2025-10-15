@@ -14,3 +14,26 @@ test('checks for the items to have descriptions', async ({ page }) => {
   await page.getByRole('button', { name: 'Greek Doric Order' }).click();
   await expect(page.getByRole('heading', { name: 'Description' })).toBeVisible()
 });
+
+test('scroll to top button appears when scrolling down and it scrolls back to top when clicked', async ({ page }) => {
+  // Check that the scroll to top button is not visible
+  await expect(page.getByRole('button', { name: 'Scroll to top' })).not.toBeVisible();
+
+  // Scroll down the page
+  await page.evaluate(() => window.scrollBy(0, 500));
+
+  // Wait for the scroll position to be greater than 300 (when button appears)
+  await page.waitForFunction(() => window.scrollY > 300, { timeout: 2000 });
+
+  // Now the scroll to top button should be visible
+  await expect(page.getByRole('button', { name: 'Scroll to top' })).toBeVisible();
+
+  // Click the scroll to top button
+  await page.getByRole('button', { name: 'Scroll to top' }).click();
+
+  // Wait for the scroll position to reach near the top
+  await page.waitForFunction(() => window.scrollY < 50, { timeout: 2000 });
+
+  // Button should disappear after scrolling to top
+  await expect(page.getByRole('button', { name: 'Scroll to top' })).not.toBeVisible();
+});

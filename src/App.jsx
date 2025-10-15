@@ -9,6 +9,7 @@ import ItemPage from './ItemPage';
 import { ItemProvider } from './contexts/ItemContext';
 import { CollectionProvider } from './contexts/CollectionContext';
 import CollectionPage from './CollectionPage';
+import ScrollToTop from './ScrollToTop';
 
 function App() {
   const [searchTerm, setSearchTerm] = useState("greek")
@@ -31,6 +32,7 @@ function App() {
             <Route path="/item/:itemId" element={<ItemPage />} />
             <Route path="/collection" element={<CollectionPage />} />
           </Routes>
+          <ScrollToTop />
         </CollectionProvider>
       </ItemProvider>
     </BrowserRouter>
