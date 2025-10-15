@@ -1,11 +1,14 @@
 import axios from "axios";
 
+// Use proxy in development, Netlify functions in production
+const isDevelopment = import.meta.env.DEV;
+
 const clevelandApi = axios.create({
-    baseURL: 'https://openaccess-api.clevelandart.org/api/artworks/'
+    baseURL: isDevelopment ? '/api/cleveland/' : '/.netlify/functions/cleveland-api'
 });
 
 const vamApi = axios.create({
-    baseURL: 'https://api.vam.ac.uk/v2/objects/'
+    baseURL: isDevelopment ? '/api/vam/' : '/.netlify/functions/vam-api'
 });
 
 // Function to search Cleveland Museum API
@@ -23,7 +26,10 @@ const searchVamArtworks = async (searchTerm, page = 1) => {
 
 // Function to fetch full V&A artwork details (including description)
 export const fetchVamArtworkDetails = async (systemNumber) => {
-    const response = await axios.get(`https://api.vam.ac.uk/v2/object/${systemNumber}`);
+    const endpoint = isDevelopment
+        ? `/api/vam/object/${systemNumber}`
+        : `/.netlify/functions/vam-api/object/${systemNumber}`;
+    const response = await axios.get(endpoint);
     return response.data.record;
 };
 
