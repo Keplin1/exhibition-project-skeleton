@@ -23,8 +23,8 @@ Follow these steps to run the project locally:
 1. **Download the repository**
 
    ```bash
-   git clone <repository-url>
-   cd <project-folder>
+   git clone git@github.com:Keplin1/exhibition-project-skeleton.git
+   cd exhibition-project-skeleton
    ```
  
 2. **Download the dependencies**
