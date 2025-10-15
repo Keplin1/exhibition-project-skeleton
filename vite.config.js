@@ -11,11 +11,6 @@ export default defineConfig({
         target: 'https://openaccess-api.clevelandart.org',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/cleveland/, '/api/artworks')
-      },
-      '/api/vam': {
-        target: 'https://api.vam.ac.uk',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/vam/, '/v2/objects')
       }
     }
   }

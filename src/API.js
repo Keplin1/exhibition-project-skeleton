@@ -4,32 +4,29 @@ import axios from "axios";
 const isDevelopment = import.meta.env.DEV;
 
 const clevelandApi = axios.create({
-    baseURL: isDevelopment ? '/api/cleveland/' : '/.netlify/functions/cleveland-api'
+    baseURL: isDevelopment ? '/api/cleveland' : '/.netlify/functions/cleveland-api'
 });
 
 const vamApi = axios.create({
-    baseURL: isDevelopment ? '/api/vam/' : '/.netlify/functions/vam-api'
+    baseURL: 'https://api.vam.ac.uk/v2/objects'
 });
 
 // Function to search Cleveland Museum API
 const searchClevelandArtworks = async (searchTerm, page = 1) => {
     const skip = (page - 1) * 15;
-    const response = await clevelandApi.get(`?q=${searchTerm}&has_image=1&limit=15&skip=${skip}`);
+    const response = await clevelandApi.get(`/?q=${searchTerm}&has_image=1&limit=15&skip=${skip}`);
     return response.data.data;
 };
 
 // Function to search V&A Museum API
 const searchVamArtworks = async (searchTerm, page = 1) => {
-    const response = await vamApi.get(`search?q=${searchTerm}&images_exist=1&page_size=15&page=${page}`);
+    const response = await vamApi.get(`/search?q=${searchTerm}&images_exist=1&page_size=15&page=${page}`);
     return response.data.records;
 };
 
 // Function to fetch full V&A artwork details (including description)
 export const fetchVamArtworkDetails = async (systemNumber) => {
-    const endpoint = isDevelopment
-        ? `/api/vam/object/${systemNumber}`
-        : `/.netlify/functions/vam-api/object/${systemNumber}`;
-    const response = await axios.get(endpoint);
+    const response = await axios.get(`https://api.vam.ac.uk/v2/object/${systemNumber}`);
     return response.data.record;
 };
 
