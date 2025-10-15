@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useCollection } from './contexts/CollectionContext';
 
 const ScrollToTop = () => {
     const [isVisible, setIsVisible] = useState(false);
+    const { selectedItems } = useCollection();
 
     // Show button when page is scrolled down
     useEffect(() => {
@@ -32,7 +34,7 @@ const ScrollToTop = () => {
             {isVisible && (
                 <button
                     onClick={scrollToTop}
-                    className="fixed bottom-8 right-8 z-50 px-6 py-4 bg-blue-200 text-black rounded shadow-lg flex items-center gap-2"
+                    className={`fixed ${selectedItems.length > 0 ? 'bottom-28' : 'bottom-8'} right-8 z-50 px-6 py-4 bg-blue-200 text-black rounded shadow-lg flex items-center gap-2`}
                     aria-label="Scroll to top"
                     title="Scroll to top"
                 >
