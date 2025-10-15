@@ -81,7 +81,13 @@ const ContentList = ({ searchTerm }) => {
 
             // If we have artworks from the result of the call, append them to our array
             if (artworks.length > 0) {
-                updateArtworks(artworks, true);
+                // Filter out any duplicates before appending
+                const existingIds = new Set(searchedArtworks.map(a => a.id));
+                const newArtworks = artworks.filter(artwork => !existingIds.has(artwork.id));
+
+                if (newArtworks.length > 0) {
+                    updateArtworks(newArtworks, true);
+                }
                 setCurrentPage(nextPage);
             }
 
