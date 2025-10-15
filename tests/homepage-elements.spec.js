@@ -1,15 +1,11 @@
 import { test, expect } from '@playwright/test';
 
-
 test.beforeEach(async ({ page }) => {
   await page.goto('http://localhost:5173/');
   await page.waitForLoadState('networkidle');
-
-})
-
+});
 
 test('check for all necessary elements to be present on the homepage', async ({ page }) => {
-
   await expect(page).toHaveTitle(/Exhibition Curator/);
   await expect(page.getByRole('heading', { name: 'Exhibition Curator' })).toBeVisible();
   await expect(page.getByText('Search and curate artworks')).toBeVisible(); // search input box
@@ -22,7 +18,6 @@ test('check for all necessary elements to be present on the homepage', async ({ 
 });
 
 test('checks that the search bar works and returns results', async ({ page }) => {
-
   // Fill in the search details
   await expect(page.getByRole('textbox', { name: 'Search for artworks or artists' })).toBeVisible()
   await page.getByRole('textbox', { name: 'Search for artworks or artists' }).click();
@@ -32,7 +27,7 @@ test('checks that the search bar works and returns results', async ({ page }) =>
   // Wait for the results to come back
   await page.waitForLoadState('networkidle');
 
-  // Wait for our artwork to be visible in the 
+  // Wait for our artwork to be visible in the results
   const searchResults = page.getByText(/Adeline/);
   expect(searchResults.count()).not.toBe(0);
-})
+});
