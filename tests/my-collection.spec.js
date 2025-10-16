@@ -28,7 +28,7 @@ test('searching for an item, addding it to my collection and checking that it ca
 
     // Save to collection
     await page.getByRole('button', { name: 'Save 1 selected artworks to' }).click();
-    await page.getByRole('link', { name: 'View my collection: 1 artwork' }).click();
+    await page.getByTestId('my-collection-button').click();
 
     await page.getByText('The Orange Christ').click();
     await expect(page.getByRole('heading', { name: 'The Orange Christ' })).toBeVisible();
