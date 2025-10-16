@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useCollection } from './contexts/CollectionContext';
+import { useCollection } from './contexts/useCollection';
 
 const CollectionPage = () => {
     const { collection, removeFromCollection } = useCollection();

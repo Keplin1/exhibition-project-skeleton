@@ -1,15 +1,6 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState } from "react";
 
 const CollectionContext = createContext();
-
-// Custom hook to use the collection context
-export const useCollection = () => {
-    const context = useContext(CollectionContext);
-    if (!context) {
-        throw new Error('useCollection must be used within a CollectionProvider');
-    }
-    return context;
-};
 
 export const CollectionProvider = ({ children }) => {
     const [collection, setCollection] = useState([]);

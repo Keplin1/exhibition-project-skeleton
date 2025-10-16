@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useCallback } from 'react';
 import { ItemContext } from './contexts/ItemContext';
-import { useCollection } from './contexts/CollectionContext';
+import { useCollection } from './contexts/useCollection';
 import { enrichVamArtwork } from './utils/artworkEnrichment';
 
 const ItemPage = () => {
@@ -23,7 +23,13 @@ const ItemPage = () => {
         }
 
         setEnrichmentAttempted(false);
-    }, [itemId]);
+    }, [itemId, items, collection]);
+
+    // Memoized enrichment function to avoid recreating on every render
+    const performEnrichment = useCallback(() => {
+        if (!artwork || !artwork.systemNumber || artwork.description) return;
+        enrichVamArtwork(artwork, items, setItems, collection, updateCollectionItem, setArtwork);
+    }, [artwork, items, setItems, collection, updateCollectionItem]);
 
     // Fetch V&A details if needed
     useEffect(() => {
@@ -31,8 +37,8 @@ const ItemPage = () => {
         if (!artwork.systemNumber || artwork.description) return;
 
         setEnrichmentAttempted(true);
-        enrichVamArtwork(artwork, items, setItems, collection, updateCollectionItem, setArtwork);
-    }, [artwork, enrichmentAttempted]);
+        performEnrichment();
+    }, [artwork, enrichmentAttempted, performEnrichment]);
 
     if (!artwork) {
         return (

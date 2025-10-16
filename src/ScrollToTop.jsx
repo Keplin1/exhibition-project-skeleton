@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useCollection } from './contexts/CollectionContext';
+import { useCollection } from './contexts/useCollection';
 
 const ScrollToTop = () => {
     const [isVisible, setIsVisible] = useState(false);

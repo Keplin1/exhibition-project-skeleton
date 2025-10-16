@@ -1,10 +1,10 @@
 
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import searchArtwork from './API'
 import { ItemContext } from './contexts/ItemContext';
 import SortControls from './SortControls';
-import { useCollection } from './contexts/CollectionContext';
+import { useCollection } from './contexts/useCollection';
 import { parseHistoricalDate } from './utils/sorting'
 
 const ContentList = ({ searchTerm }) => {
@@ -28,15 +28,13 @@ const ContentList = ({ searchTerm }) => {
 
     const navigate = useNavigate();
 
-    // Helper to update artworks state
-    const updateArtworks = (newArtworks, append = false) => {
-        const updatedList = append ? [...searchedArtworks, ...newArtworks] : newArtworks;
-        setSearchedArtworks(updatedList);
-        setItems(updatedList);
-    };
+    // Sync searchedArtworks with ItemContext
+    useEffect(() => {
+        setItems(searchedArtworks);
+    }, [searchedArtworks, setItems]);
 
     // Initial fetch - replaces existing artworks
-    const fetchInitialArtworks = async () => {
+    const fetchInitialArtworks = useCallback(async () => {
 
         // Reset our states
         setLoading(true);
@@ -51,7 +49,7 @@ const ContentList = ({ searchTerm }) => {
             console.log(artworks);
 
             // Update our artworks state/ array
-            updateArtworks(artworks);
+            setSearchedArtworks(artworks);
             // Determine whether we have more results to load or not
             setHasMore(artworks.length >= 30);
         } catch (error) {
@@ -60,10 +58,10 @@ const ContentList = ({ searchTerm }) => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [searchTerm]);
 
     // Load more - appends to existing artworks
-    const loadMoreArtworks = async () => {
+    const loadMoreArtworks = useCallback(async () => {
         // If there is nothing more to load or already loading, do nothing
         if (loadingMore || !hasMore) {
             return;
@@ -81,13 +79,17 @@ const ContentList = ({ searchTerm }) => {
 
             // If we have artworks from the result of the call, append them to our array
             if (artworks.length > 0) {
-                // Filter out any duplicates before appending
-                const existingIds = new Set(searchedArtworks.map(a => a.id));
-                const newArtworks = artworks.filter(artwork => !existingIds.has(artwork.id));
+                // Use functional update to avoid dependency on searchedArtworks
+                setSearchedArtworks(prevArtworks => {
+                    // Filter out any duplicates before appending
+                    const existingIds = new Set(prevArtworks.map(a => a.id));
+                    const newArtworks = artworks.filter(artwork => !existingIds.has(artwork.id));
 
-                if (newArtworks.length > 0) {
-                    updateArtworks(newArtworks, true);
-                }
+                    if (newArtworks.length > 0) {
+                        return [...prevArtworks, ...newArtworks];
+                    }
+                    return prevArtworks;
+                });
                 setCurrentPage(nextPage);
             }
 
@@ -98,7 +100,7 @@ const ContentList = ({ searchTerm }) => {
         } finally {
             setLoadingMore(false);
         }
-    };
+    }, [loadingMore, hasMore, searchTerm, currentPage]);
 
     // API call - Initial fetch of the artworks based on search term
     useEffect(() => {
@@ -110,7 +112,7 @@ const ContentList = ({ searchTerm }) => {
 
         // Fire off the request(s) to fetch the artworks
         fetchInitialArtworks();
-    }, [searchTerm]);
+    }, [searchTerm, fetchInitialArtworks]);
 
     // Infinite scroll handler
     useEffect(() => {
@@ -125,7 +127,7 @@ const ContentList = ({ searchTerm }) => {
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [loadingMore, hasMore, searchedArtworks, currentPage]);
+    }, [loadingMore, hasMore, searchedArtworks, loadMoreArtworks]);
 
 
     // The sorting function

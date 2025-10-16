@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useCollection } from './contexts/CollectionContext';
+import { useCollection } from './contexts/useCollection';
 
 const Header = () => {
     const { collection } = useCollection();
