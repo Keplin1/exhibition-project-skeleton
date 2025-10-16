@@ -10,7 +10,7 @@ import { parseHistoricalDate } from './utils/sorting'
 const ContentList = ({ searchTerm }) => {
 
     const [searchedArtworks, setSearchedArtworks] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(!!searchTerm);
     const [loadingMore, setLoadingMore] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [sortOption, setSortOption] = useState(''); // Sorting option
@@ -218,7 +218,7 @@ const ContentList = ({ searchTerm }) => {
         );
     }
 
-    if (searchedArtworks.length === 0 && searchTerm) {
+    if (searchedArtworks.length === 0 && searchTerm && !loading) {
         return (
             <div className="text-center py-8 min-h-[600px]" role="status">
                 <p className="text-gray-500">No results found for "{searchTerm}"</p>

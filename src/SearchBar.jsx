@@ -1,11 +1,17 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const SearchBar = ({ setSearchTerm }) => {
+const SearchBar = ({ searchTerm, setSearchTerm }) => {
 
     const presetSearches = ['sculpture', 'modern art', 'photography', 'landscapes', 'van Gogh', 'portraits', 'victorian art', 'ancient art'];
 
-    const [searchInput, setSearchInput] = useState("");
+    const [searchInput, setSearchInput] = useState(searchTerm || "");
+
+    // Sync searchInput with searchTerm when it changes externally
+    useEffect(() => {
+        setSearchInput(searchTerm || "");
+    }, [searchTerm]);
+
     const handlePresetClick = (preset) => {
         setSearchTerm(preset);
     };
@@ -21,7 +27,6 @@ const SearchBar = ({ setSearchTerm }) => {
     }
     const handleSubmit = () => {
         setSearchTerm(searchInput);
-        setSearchInput("");
     }
 
 
@@ -51,12 +56,12 @@ const SearchBar = ({ setSearchTerm }) => {
             </div>
 
             <div className="flex flex-wrap gap-2" role="group" aria-label="Quick search suggestions">
-                <span className="text-sm text-back-500 mr-2 mt-4" aria-hidden="true">Quick searches:</span>
+                <span className="text-sm text-gray-700 mr-2 mt-4" aria-hidden="true">Quick searches:</span>
                 {presetSearches.map((preset) => (
                     <button
                         key={preset}
                         onClick={() => handlePresetClick(preset)}
-                        className="px-3 py-1 bg-gray-200 text-sm rounded hover:bg-gray-300"
+                        className="px-3 py-1 bg-gray-200 text-gray-800 text-sm rounded hover:bg-gray-300"
                         aria-label={`Quick search for ${preset}`}
                         title={`Search for ${preset}`}
                     >
