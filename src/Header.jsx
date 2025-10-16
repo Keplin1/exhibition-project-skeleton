@@ -1,8 +1,9 @@
-import { Link, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useCollection } from './contexts/CollectionContext';
 
 const Header = () => {
     const { collection } = useCollection();
+    const navigate = useNavigate();
     const location = useLocation();
     const isCollectionPage = location.pathname === '/collection';
 
@@ -17,15 +18,15 @@ const Header = () => {
 
             {!isCollectionPage && (
                 <nav className="fixed top-8 right-8 z-1" aria-label="Collection navigation">
-                    <Link
-                        to="/collection"
-                        className="px-4 py-2 text-gray-800 bg-green-200 rounded hover:bg-green-400 transition-colors whitespace-nowrap shadow-md"
+                    <button
+                        onClick={() => navigate('/collection')}
+                        className="px-4 py-2 bg-green-200 text-gray-800 rounded hover:bg-green-300 whitespace-nowrap shadow-md"
                         aria-label={`View my collection: ${collection.length} ${collection.length === 1 ? 'artwork' : 'artworks'} saved`}
                         data-testid="my-collection-button"
                         title={`View your collection (${collection.length} artwork${collection.length === 1 ? '' : 's'})`}
                     >
                         My Collection ({collection.length})
-                    </Link>
+                    </button>
                 </nav>
             )}
         </header>
