@@ -13,7 +13,7 @@ const Header = () => {
             <p className="text-gray-600">Search and curate artworks from museum collections</p>
 
             {!isCollectionPage && (
-                <nav className="fixed top-8 right-8 z-1" aria-label="Collection navigation">
+                <nav className="fixed top-8 right-8 z-3" aria-label="Collection navigation">
                     <button
                         onClick={() => navigate('/collection')}
                         className="px-4 py-2 bg-green-200 text-gray-800 rounded hover:bg-green-300 whitespace-nowrap shadow-md"
