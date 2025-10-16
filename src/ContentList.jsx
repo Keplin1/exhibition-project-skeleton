@@ -176,9 +176,36 @@ const ContentList = ({ searchTerm }) => {
     const sortedArtworks = sortArtworks(searchedArtworks, sortOption);
 
     if (loading) {
+        // Render a skeleton grid to reserve space and prevent header jump
         return (
-            <div className="text-center py-8" role="status" aria-live="polite">
-                <p>Loading artworks...</p>
+            <div>
+                {/* Sort Controls Skeleton */}
+                <div className="mb-4 p-3 bg-gray-100 rounded">
+                    <div className="flex items-center gap-3">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse w-16" />
+                        <div className="h-10 bg-gray-200 rounded animate-pulse w-64" />
+                    </div>
+                </div>
+
+                {/* Skeleton Grid - Centered with max width */}
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24 min-h-[600px]">
+                        {Array.from({ length: 30 }).map((_, i) => (
+                            <div key={i} className="border border-gray-300 rounded overflow-hidden">
+                                <div className="aspect-square bg-gray-100 animate-pulse w-full" />
+                                <div className="p-3">
+                                    <div className="h-4 bg-gray-100 rounded animate-pulse w-3/4 mb-1" />
+                                    <div className="h-4 bg-gray-100 rounded animate-pulse w-2/3 mb-1" />
+                                    <div className="h-3 bg-gray-100 rounded animate-pulse w-1/2" />
+                                    <div className="h-3 bg-gray-100 rounded animate-pulse w-1/3 mt-1" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <div className="text-center py-8" role="status" aria-live="polite">
+                    <p>Loading artworks...</p>
+                </div>
             </div>
         );
     }
@@ -193,12 +220,11 @@ const ContentList = ({ searchTerm }) => {
 
     if (searchedArtworks.length === 0 && searchTerm) {
         return (
-            <div className="text-center py-8" role="status">
+            <div className="text-center py-8 min-h-[600px]" role="status">
                 <p className="text-gray-500">No results found for "{searchTerm}"</p>
             </div>
         );
     }
-
 
     const handleItemClick = (artwork) => {
         navigate(`/item/${artwork.id}`);
@@ -234,116 +260,131 @@ const ContentList = ({ searchTerm }) => {
                 </div>
             )}
 
-            {/* Results Grid */}
-            <div
-                className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24"
-                role="list"
-                aria-label={`Search results for ${searchTerm}: ${sortedArtworks.length} artworks found`}
-            >
-                {sortedArtworks.map((artwork) => (
-                    <div
-                        key={artwork.id}
-                        className="border border-gray-300 rounded overflow-hidden hover:shadow-lg transition-shadow relative"
-                        role="listitem"
-                    >
-                        {/* Checkbox - Top Right */}
-                        <div className="absolute top-2 right-2 z-1">
-                            <input
-                                type="checkbox"
-                                checked={isSelected(artwork.id)}
-                                onChange={(e) => {
-                                    e.stopPropagation();
-                                    toggleSelection(artwork);
-                                }}
-                                className="w-10 h-10 cursor-pointer"
-                                disabled={isInCollection(artwork.id)}
-                                aria-label={`Select ${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown artist'}${isInCollection(artwork.id) ? ' (already in collection)' : ''}`}
-                                aria-checked={isSelected(artwork.id)}
-                                title={isInCollection(artwork.id) ? 'This artwork is already in your collection' : isSelected(artwork.id) ? 'Remove from selection' : 'Add to selection'}
-                            />
-                        </div>
-
-                        {/* Already in Collection Badge */}
-                        {isInCollection(artwork.id) && (
-                            <div
-                                className="absolute top-2 left-2 z-1 bg-green-600 text-white text-xs px-2 py-1 rounded"
-                                role="status"
-                                aria-label="This artwork is already saved in your collection"
-                            >
-                                Saved
-                            </div>
-                        )}
-
-                        {/* Thumbnail - clickable */}
+            {/* Results Grid - Centered with max width */}
+            <div className="max-w-6xl mx-auto">
+                <div
+                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-24"
+                    role="list"
+                    aria-label={`Search results for ${searchTerm}: ${sortedArtworks.length} artworks found`}
+                >
+                    {sortedArtworks.map((artwork) => (
                         <div
-                            onClick={() => handleItemClick(artwork)}
-                            className="aspect-square bg-gray-200 flex items-center justify-center cursor-pointer"
-                            role="button"
-                            tabIndex={0}
-                            aria-label={`View details for ${artwork.title || 'Untitled'}`}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault();
-                                    handleItemClick(artwork);
-                                }
-                            }}
+                            key={artwork.id}
+                            className="border border-gray-300 rounded overflow-hidden hover:shadow-lg transition-shadow relative"
+                            role="listitem"
                         >
-                            {artwork.image ? (
-                                <img
-                                    src={artwork.image}
-                                    alt={`${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown artist'}${artwork.date ? `, ${artwork.date}` : ''}`}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.nextSibling.style.display = 'block';
+                            {/* Checkbox - Top Right */}
+                            <div className="absolute top-2 right-2 z-1">
+                                <input
+                                    type="checkbox"
+                                    checked={isSelected(artwork.id)}
+                                    onChange={(e) => {
+                                        e.stopPropagation();
+                                        toggleSelection(artwork);
                                     }}
+                                    className="w-10 h-10 cursor-pointer"
+                                    disabled={isInCollection(artwork.id)}
+                                    aria-label={`Select ${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown artist'}${isInCollection(artwork.id) ? ' (already in collection)' : ''}`}
+                                    aria-checked={isSelected(artwork.id)}
+                                    title={isInCollection(artwork.id) ? 'This artwork is already in your collection' : isSelected(artwork.id) ? 'Remove from selection' : 'Add to selection'}
                                 />
-                            ) : null}
+                            </div>
+
+                            {/* Already in Collection Badge */}
+                            {isInCollection(artwork.id) && (
+                                <div
+                                    className="absolute top-2 left-2 z-1 bg-green-600 text-white text-xs px-2 py-1 rounded"
+                                    role="status"
+                                    aria-label="This artwork is already saved in your collection"
+                                >
+                                    Saved
+                                </div>
+                            )}
+
+                            {/* Thumbnail - clickable */}
                             <div
-                                className={`text-gray-500 text-sm ${artwork.image ? 'hidden' : 'block'}`}
-                                aria-label="No image available for this artwork"
+                                onClick={() => handleItemClick(artwork)}
+                                className="aspect-square bg-gray-200 flex items-center justify-center cursor-pointer"
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`View details for ${artwork.title || 'Untitled'}`}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        handleItemClick(artwork);
+                                    }
+                                }}
                             >
-                                No Image
+                                {artwork.image ? (
+                                    <img
+                                        src={artwork.image}
+                                        alt={`${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown artist'}${artwork.date ? `, ${artwork.date}` : ''}`}
+                                        className="w-full h-full object-cover"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'block';
+                                        }}
+                                    />
+                                ) : null}
+                                <div
+                                    className={`text-gray-500 text-sm ${artwork.image ? 'hidden' : 'block'}`}
+                                    aria-label="No image available for this artwork"
+                                >
+                                    No Image
+                                </div>
+                            </div>
+
+                            {/* Title and Creator - clickable */}
+                            <div
+                                onClick={() => handleItemClick(artwork)}
+                                className="p-3 cursor-pointer"
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`View details for ${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown'}`}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' || e.key === ' ') {
+                                        e.preventDefault();
+                                        handleItemClick(artwork);
+                                    }
+                                }}
+                            >
+                                <h3 className="font-medium text-sm leading-tight overflow-hidden mb-1 line-clamp-2">
+                                    {artwork.title || 'Untitled'}
+                                </h3>
+                                <p className="text-xs text-gray-500 truncate">
+                                    {artwork.creator || 'Unknown'}
+                                </p>
+                                {artwork.date && (
+                                    <p className="text-xs text-gray-400 truncate mt-1">
+                                        {artwork.date}
+                                    </p>
+                                )}
                             </div>
                         </div>
+                    ))}
 
-                        {/* Title and Creator - clickable */}
-                        <div
-                            onClick={() => handleItemClick(artwork)}
-                            className="p-3 cursor-pointer"
-                            role="button"
-                            tabIndex={0}
-                            aria-label={`View details for ${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown'}`}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault();
-                                    handleItemClick(artwork);
-                                }
-                            }}
-                        >
-                            <h3 className="font-medium text-sm leading-tight overflow-hidden mb-1 line-clamp-2">
-                                {artwork.title || 'Untitled'}
-                            </h3>
-                            <p className="text-xs text-gray-500 truncate">
-                                {artwork.creator || 'Unknown'}
-                            </p>
-                            {artwork.date && (
-                                <p className="text-xs text-gray-400 truncate mt-1">
-                                    {artwork.date}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-                ))}
-            </div>
+                    {/* Loading More Skeleton Cards - Inside Same Grid */}
+                    {loadingMore && (() => {
+                        // Calculate how many skeletons to show to so that we have a complete row
+                        const itemsPerRow = 4; // we are using lg:grid-cols-4, so 4 items per row on large screens
+                        const currentCount = sortedArtworks.length;
+                        const remainder = currentCount % itemsPerRow;
+                        const skeletonsNeeded = remainder === 0 ? itemsPerRow : (itemsPerRow - remainder);
 
-            {/* Loading More Spinner */}
-            {loadingMore && (
-                <div className="text-center py-8" role="status" aria-live="polite" aria-busy="true">
-                    <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" aria-hidden="true"></div>
-                    <p className="mt-2 text-gray-600">Loading more artworks...</p>
+                        return Array.from({ length: skeletonsNeeded }).map((_, i) => (
+                            <div key={`loading-${i}`} className="border border-gray-300 rounded overflow-hidden" role="status" aria-live="polite" aria-busy="true">
+                                <div className="aspect-square bg-gray-100 animate-pulse w-full" />
+                                <div className="p-3">
+                                    <div className="h-4 bg-gray-100 rounded animate-pulse w-3/4 mb-1" />
+                                    <div className="h-4 bg-gray-100 rounded animate-pulse w-2/3 mb-1" />
+                                    <div className="h-3 bg-gray-100 rounded animate-pulse w-1/2" />
+                                    <div className="h-3 bg-gray-100 rounded animate-pulse w-1/3 mt-1" />
+                                </div>
+                            </div>
+                        ));
+                    })()}
                 </div>
-            )}
+            </div>
 
             {/* No More Results Message */}
             {!hasMore && searchedArtworks.length > 0 && (
