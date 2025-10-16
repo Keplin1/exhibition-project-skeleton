@@ -1,5 +1,7 @@
 # Exhibition Curator
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/75ca7761-196c-4ffd-a644-55cb0a7a848b/deploy-status)](https://app.netlify.com/projects/exhibition-curator-northcoders/deploys)
+
 A web application for searching and curating artworks from museum collections.
 
 ## Features

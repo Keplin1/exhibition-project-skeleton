@@ -43,6 +43,16 @@ npx playwright show-report
 - Use `.first()` when multiple elements match to avoid strict mode violations
 - Always test accessibility features (keyboard navigation, ARIA roles)
 
+#### Notes:
+While the the Cleveland Museum API is very good, it is also very tempremental.
+
+During development, this API underwent changes which meant this project had to be adapted.
+
+The tests around the Cleveland Museum API are a little flaky, as the API itself is sometimes unreliable. 
+The API response can take a while to load, which sometimes causes tests to fail.
+
+You may need to rerun the tests, with additional timeouts in order to assert correctly.
+
 ---
 
 ## Adding a New Museum API
@@ -63,7 +73,7 @@ const newMuseumApi = axios.create({
 
 **Important:** Do NOT include trailing slashes in `baseURL` to avoid path issues.
 
-### 2. Add Data Normalization Function
+### 2. Add Data Normalisation Function
 
 Create a function to normalise the API response to match your app's expected format:
 
@@ -202,8 +212,27 @@ exports.handler = async (event, context) => {
 
 2. **Netlify automatically deploys** when you push to the main branch.
 
-### Manual Deploy via Netlify CLI
+### Deploy via Netlify UI
 
+Netlify offers the option to automatically publish a new version of the application when new changes are merged to the repository.
+
+To achieve this, you simply have to log in with your GitHub account and create a project from your GitHub repository.
+
+Under 'Build & Deploy settings' -> 'Build Settings', ensure the `build` command is set to;
+```
+npm run build
+```
+
+your 'publish directory' is set to;
+```
+dist
+```
+
+and your 'production branch' is set to `main` (or `master`, depending on your repository settings).
+
+You should also enable the 'Any pull request against your production branch / branch deploy branches' setting to ensure you automatically deploy the latest changes when you merge changes into your `main` branch.
+
+### Manual Deploy via Netlify CLI
 ```bash
 # Install Netlify CLI (if not already installed)
 npm install -g netlify-cli
