@@ -81,7 +81,7 @@ test('keyboard navigation on collection page: tab to artwork and press enter to 
     await page.waitForLoadState('networkidle');
 
     // Use Tab to navigate to the artwork thumbnail
-    // Tab from page start -> Back to Search link -> Artwork thumbnail
+    // Tab from page start -> Back to Search button -> Artwork thumbnail
     await page.keyboard.press('Tab');
     await page.keyboard.press('Tab');
 

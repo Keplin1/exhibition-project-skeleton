@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useCollection } from './contexts/CollectionContext';
 
 const CollectionPage = () => {
@@ -11,7 +11,7 @@ const CollectionPage = () => {
 
     if (collection.length === 0) {
         return (
-            <div>
+            <div className="p-4">
                 <button
                     onClick={() => navigate('/')}
                     className="mb-6 px-6 py-4 bg-blue-200 text-black rounded"
@@ -42,7 +42,7 @@ const CollectionPage = () => {
     }
 
     return (
-        <div>
+        <div className="p-4">
             <button
                 onClick={() => navigate('/')}
                 className="mb-6 px-6 py-4 bg-blue-200 text-black rounded"
@@ -98,12 +98,7 @@ const CollectionPage = () => {
                             <div className="p-3">
                                 <h3
                                     onClick={() => handleItemClick(artwork)}
-                                    className="font-medium text-sm leading-tight overflow-hidden mb-1 cursor-pointer hover:text-blue-600"
-                                    style={{
-                                        display: '-webkit-box',
-                                        WebkitLineClamp: 2,
-                                        WebkitBoxOrient: 'vertical'
-                                    }}
+                                    className="font-medium text-sm leading-tight overflow-hidden mb-1 cursor-pointer hover:text-blue-600 line-clamp-2"
                                     role="button"
                                     tabIndex={0}
                                     aria-label={`View details for ${artwork.title || 'Untitled'}`}

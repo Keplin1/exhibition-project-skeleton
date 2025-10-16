@@ -19,7 +19,7 @@ test('quick-search-buttons', async ({ page }) => {
     //Check that the page has the quick search term somewhere on the page 
     await expect(page.getByText('Vincent van Gogh (Dutch, 1853')).toBeVisible();
 
-    await page.getByRole('link', { name: 'Go back to search page' }).click();
+    await page.getByRole('button', { name: 'Go back to search page' }).click();
 
     await page.waitForLoadState('networkidle');
     // Wait for our artwork to be visible in the results

@@ -10,7 +10,7 @@ test('checks for the items to have descriptions', async ({ page }) => {
   // Click the first button (thumbnail) for this artwork
   await page.getByRole('button', { name: 'View details for Red-Figure Lekythos (Oil Vessel): Warrior Cutting Hair' }).first().click();
   await expect(page.getByRole('heading', { name: 'Description' })).toBeVisible()
-  await page.getByRole('link', { name: 'Go back to search page' }).click();
+  await page.getByRole('button', { name: 'Go back to search page' }).click();
   await expect(page.getByRole('heading', { name: 'Greek Doric Order' })).toBeVisible()
   await page.getByRole('button', { name: 'Greek Doric Order' }).first().click();
   await expect(page.getByRole('heading', { name: 'Description' })).toBeVisible()
