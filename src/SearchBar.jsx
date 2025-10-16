@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const SearchBar = ({ setSearchTerm }) => {
 
-    const presetSearches = ['sculpture', 'modern art', 'photography', 'landscapes', 'portraits', 'victorian art', 'pottery', 'fine art', 'ancient art'];
+    const presetSearches = ['sculpture', 'modern art', 'photography', 'landscapes', 'van Gogh', 'portraits', 'victorian art', 'ancient art'];
 
     const [searchInput, setSearchInput] = useState("");
     const handlePresetClick = (preset) => {
