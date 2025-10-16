@@ -254,7 +254,7 @@ const ContentList = ({ searchTerm }) => {
                                     e.stopPropagation();
                                     toggleSelection(artwork);
                                 }}
-                                className="w-5 h-5 cursor-pointer"
+                                className="w-10 h-10 cursor-pointer"
                                 disabled={isInCollection(artwork.id)}
                                 aria-label={`Select ${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown artist'}${isInCollection(artwork.id) ? ' (already in collection)' : ''}`}
                                 aria-checked={isSelected(artwork.id)}
