@@ -89,7 +89,6 @@ const parseHistoricalDate = (dateString) => {
 
         // Handle abbreviated ranges like "1810-20" → "1810-1820"
         if (end < 100) {
-            const magnitude = Math.pow(10, Math.floor(Math.log10(start)) + 1);
             const prefix = Math.floor(start / 100) * 100;
 
             if (end < 10) {
