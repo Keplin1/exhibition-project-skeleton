@@ -51,3 +51,14 @@ The app is configured for Netlify deployment:
 2. Connect your repository to Netlify
 3. Netlify will automatically detect the configuration from `netlify.toml`
 4. The serverless functions will handle API requests in production
+
+## Maintenance & Development
+
+For detailed information on maintaining and updating this project, see [MAINTENANCE.md](./MAINTENANCE.md).
+
+Topics covered:
+- Running and writing tests
+- Adding new museum APIs
+- Handling CORS issues
+- Deploying updates
+- Troubleshooting common issues
