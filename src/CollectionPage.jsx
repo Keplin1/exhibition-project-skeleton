@@ -12,28 +12,28 @@ const CollectionPage = () => {
     if (collection.length === 0) {
         return (
             <div className="max-w-4xl mx-auto p-4">
-                <Link
-                    to="/"
-                    className="inline-block mb-6 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                <button
+                    onClick={() => navigate('/')}
+                    className="px-6 py-4 bg-blue-200 text-black rounded"
                     aria-label="Go back to search page"
                     title="Return to search page"
                 >
                     Back to Search
-                </Link>
+                </button>
 
                 <div className="text-center py-12" role="status">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4">Your Collection is Empty</h2>
                     <p className="text-gray-600 mb-6">
                         Start adding artworks to your collection from the search page!
                     </p>
-                    <Link
-                        to="/"
-                        className="inline-block px-4 py-2 bg-blue-200 text-white rounded hover:bg-blue-700"
+                    <button
+                        onClick={() => navigate('/')}
+                        className="px-6 py-4 bg-blue-200 text-black rounded"
                         aria-label="Browse artworks to add to your collection"
                         title="Browse artworks to add to your collection"
                     >
                         Browse Artworks
-                    </Link>
+                    </button>
                 </div>
             </div>
         );
@@ -41,13 +41,14 @@ const CollectionPage = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-4">
-            <Link
-                to="/"
-                className="inline-block mb-6 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+            <button
+                onClick={() => navigate('/')}
+                className="mb-6 px-6 py-4 bg-blue-200 text-black rounded"
                 aria-label="Go back to search page"
+                title="Return to search page"
             >
                 Back to Search
-            </Link>
+            </button>
 
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 My Collection ({collection.length} {collection.length === 1 ? 'artwork' : 'artworks'})
