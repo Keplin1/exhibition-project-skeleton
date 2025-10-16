@@ -226,6 +226,7 @@ const ContentList = ({ searchTerm }) => {
                             onClick={addToCollection}
                             className="px-4 py-2 bg-green-200 text-gray-800 rounded hover:bg-green-300"
                             aria-label={`Save ${selectedItems.length} selected artworks to collection`}
+                            title={`Save ${selectedItems.length} selected artwork${selectedItems.length === 1 ? '' : 's'} to your collection`}
                         >
                             Save to My Collection
                         </button>
@@ -258,6 +259,7 @@ const ContentList = ({ searchTerm }) => {
                                 disabled={isInCollection(artwork.id)}
                                 aria-label={`Select ${artwork.title || 'Untitled'} by ${artwork.creator || 'Unknown artist'}${isInCollection(artwork.id) ? ' (already in collection)' : ''}`}
                                 aria-checked={isSelected(artwork.id)}
+                                title={isInCollection(artwork.id) ? 'This artwork is already in your collection' : isSelected(artwork.id) ? 'Remove from selection' : 'Add to selection'}
                             />
                         </div>
 

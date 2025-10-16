@@ -22,6 +22,7 @@ const Header = () => {
                         className="px-4 py-2 text-gray-800 bg-green-200 rounded hover:bg-green-400 transition-colors whitespace-nowrap shadow-md"
                         aria-label={`View my collection: ${collection.length} ${collection.length === 1 ? 'artwork' : 'artworks'} saved`}
                         data-testid="my-collection-button"
+                        title={`View your collection (${collection.length} artwork${collection.length === 1 ? '' : 's'})`}
                     >
                         My Collection ({collection.length})
                     </Link>

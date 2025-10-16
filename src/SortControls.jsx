@@ -16,6 +16,7 @@ const SortControls = ({ sortOption, setSortOption }) => {
                     onChange={handleSortChange}
                     className="px-3 py-2 border border-gray-300 rounded bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
                     aria-label="Sort artworks by different criteria"
+                    title="Sort artworks by different criteria"
                 >
                     <option value="">None</option>
                     <option value="artist-asc">Artist Name (A → Z)</option>

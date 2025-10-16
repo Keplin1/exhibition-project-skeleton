@@ -40,6 +40,7 @@ const ItemPage = () => {
                     to="/"
                     className="inline-block mb-4 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
                     aria-label="Go back to search page"
+                    title="Return to search page"
                 >
                     Back to Search
                 </Link>
@@ -62,6 +63,7 @@ const ItemPage = () => {
                 to="/"
                 className="inline-block mb-6 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors"
                 aria-label="Go back to search page"
+                title="Return to search page"
             >
                 Back to Search
             </Link>
@@ -150,6 +152,7 @@ const ItemPage = () => {
                                         rel="noopener noreferrer"
                                         className="inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                                         aria-label={`View ${artwork.title || 'this artwork'} on the museum website (opens in new tab)`}
+                                        title={`View ${artwork.title || 'this artwork'} on the museum website`}
                                     >
                                         View on Museum Website
                                     </a>

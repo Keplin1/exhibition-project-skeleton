@@ -16,6 +16,7 @@ const CollectionPage = () => {
                     to="/"
                     className="inline-block mb-6 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
                     aria-label="Go back to search page"
+                    title="Return to search page"
                 >
                     Back to Search
                 </Link>
@@ -29,6 +30,7 @@ const CollectionPage = () => {
                         to="/"
                         className="inline-block px-4 py-2 bg-blue-200 text-white rounded hover:bg-blue-700"
                         aria-label="Browse artworks to add to your collection"
+                        title="Browse artworks to add to your collection"
                     >
                         Browse Artworks
                     </Link>
@@ -118,6 +120,7 @@ const CollectionPage = () => {
                                 onClick={() => removeFromCollection(artwork.id)}
                                 className="w-full text-xs px-2 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200"
                                 aria-label={`Remove ${artwork.title || 'Untitled'} from collection`}
+                                title={`Remove ${artwork.title || 'Untitled'} from your collection`}
                             >
                                 Remove
                             </button>

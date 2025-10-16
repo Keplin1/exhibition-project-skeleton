@@ -42,6 +42,7 @@ const SearchBar = ({ setSearchTerm }) => {
                     onClick={handleSubmit}
                     className="px-6 py-4 bg-blue-200 text-black rounded disabled:opacity-50"
                     aria-label="Submit search"
+                    title="Search for artworks"
                 >
                     search
                 </button>
@@ -57,6 +58,7 @@ const SearchBar = ({ setSearchTerm }) => {
                         onClick={() => handlePresetClick(preset)}
                         className="px-3 py-1 bg-gray-200 text-sm rounded hover:bg-gray-300"
                         aria-label={`Quick search for ${preset}`}
+                        title={`Search for ${preset}`}
                     >
                         {preset}
                     </button>
