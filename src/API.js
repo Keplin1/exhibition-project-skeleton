@@ -1,4 +1,5 @@
 import axios from "axios";
+import { parseHistoricalDate } from "./utils/sorting";
 
 // Use proxy in development, Netlify functions in production
 const isDevelopment = import.meta.env.DEV;
@@ -33,18 +34,22 @@ export const fetchVamArtworkDetails = async (systemNumber) => {
 // Function to normalise Cleveland API data
 // because the data structures are different, we need to map them to a common format
 const normaliseClevelandData = (artworks) => {
-    return artworks.map(artwork => ({
-        id: `cleveland-${artwork.id}`,
-        title: artwork.title,
-        source: 'Cleveland Museum of Art',
-        image: artwork.images?.web?.url || null,
-        creator: artwork.creators?.[0]?.description || 'Unknown',
-        date: artwork.creation_date || '',
-        url: artwork.url || null,
-        description: artwork.wall_description || artwork.description || null,
-        materials: artwork.technique || null,
-        rawData: artwork
-    }));
+    return artworks.map(artwork => {
+        const date = artwork.creation_date || '';
+        return {
+            id: `cleveland-${artwork.id}`,
+            title: artwork.title,
+            source: 'Cleveland Museum of Art',
+            image: artwork.images?.web?.url || null,
+            creator: artwork.creators?.[0]?.description || 'Unknown',
+            date,
+            parsedDate: date ? parseHistoricalDate(date) : 0, // Pre-compute for efficient sorting
+            url: artwork.url || null,
+            description: artwork.wall_description || artwork.description || null,
+            materials: artwork.technique || null,
+            rawData: artwork
+        };
+    });
 };
 
 // Function to normalise V&A API data
@@ -56,6 +61,7 @@ const normaliseVamData = (artworks) => {
             const thumbnailUrl = artwork._images._primary_thumbnail;
             const fullImageUrl = thumbnailUrl ? thumbnailUrl.replace('/!100,100/', '/full/') : null;
 
+            const date = artwork._primaryDate || '';
             return {
                 id: `vam-${artwork.systemNumber}`,
                 systemNumber: artwork.systemNumber,
@@ -63,7 +69,8 @@ const normaliseVamData = (artworks) => {
                 source: 'Victoria & Albert Museum',
                 image: fullImageUrl,
                 creator: artwork._primaryMaker?.name || 'Unknown',
-                date: artwork._primaryDate || '',
+                date,
+                parsedDate: date ? parseHistoricalDate(date) : 0, // Pre-compute for efficient sorting
                 url: `https://collections.vam.ac.uk/item/${artwork.systemNumber}/`,
                 description: null, // Will be fetched later when viewing item details
                 materials: null, // Will be fetched later when viewing item details

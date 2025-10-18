@@ -5,7 +5,6 @@ import searchArtwork from './API'
 import { ItemContext } from './contexts/ItemContext';
 import SortControls from './SortControls';
 import { useCollection } from './contexts/useCollection';
-import { parseHistoricalDate } from './utils/sorting'
 
 const ContentList = ({ searchTerm }) => {
 
@@ -137,8 +136,9 @@ const ContentList = ({ searchTerm }) => {
         const sorted = [...artworksToSort];
 
         const compareByDate = (a, b, ascending = true) => {
-            const yearA = parseHistoricalDate(a.date);
-            const yearB = parseHistoricalDate(b.date);
+            // Use pre-computed parsedDate for efficient sorting
+            const yearA = a.parsedDate || 0;
+            const yearB = b.parsedDate || 0;
             return ascending ? yearA - yearB : yearB - yearA;
         };
 
